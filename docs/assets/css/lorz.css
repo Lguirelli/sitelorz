@@ -381,8 +381,28 @@ html:not(.js) .flow-stage:first-child .flow-card { border-color: var(--accent); 
 
 /* Roteador do funil -------------------------------------------------------- */
 .router-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
-.route { position: relative; display: flex; flex-direction: column; padding: 1.75rem; border-radius: var(--r-lg); background: var(--bg); border: 1px solid var(--line); box-shadow: var(--sh-1); transition: box-shadow var(--t-med), transform var(--t-med) var(--ease-out), border-color var(--t-med); }
-.route:hover { box-shadow: var(--sh-2); transform: translateY(-3px); border-color: var(--line-2); }
+.route { --spring: cubic-bezier(.34, 1.36, .5, 1); position: relative; display: flex; flex-direction: column; padding: 1.75rem; border-radius: var(--r-lg); background: var(--bg); border: 1px solid var(--line); box-shadow: var(--sh-1); cursor: pointer; transition: translate .6s var(--spring), scale .6s var(--spring), filter .45s var(--ease-out), opacity .45s var(--ease-out), box-shadow .45s var(--ease-out), border-color .3s; }
+.js .route.reveal.is-in { transition: transform .8s var(--ease-out), translate .6s var(--spring), scale .6s var(--spring), filter .45s var(--ease-out), opacity .45s var(--ease-out), box-shadow .45s var(--ease-out), border-color .3s; transition-delay: 0s; }
+/* O card inteiro é o link: o ::after do botão cobre o card. */
+.route .btn::after { content: ""; position: absolute; inset: 0; border-radius: var(--r-lg); }
+.route .btn:active { transform: none; }
+.route:active { scale: 1.02; }
+.route:has(.btn:focus-visible) { outline: 2px solid var(--red-ink); outline-offset: 4px; }
+.route .btn:focus-visible { outline: none; }
+.route:hover, .route:focus-within { border-color: var(--line-2); box-shadow: var(--sh-3); }
+.route[data-stage="decide"]:hover, .route[data-stage="decide"]:focus-within { border-color: var(--surface-strong); }
+/* Morph de foco: o card ativo sobe e cresce; os vizinhos se afastam, encolhem e desfocam com a mesma mola. */
+@media (hover: hover) and (min-width: 861px) {
+  .route:hover, .route:focus-within { translate: 0 -8px; scale: 1.035; z-index: 2; }
+  .router-list:has(.route:hover, .route:focus-within) .route:not(:hover, :focus-within) { scale: .96; filter: blur(2px) saturate(.85); opacity: .72; }
+  .route:is(:hover, :focus-within) ~ .route { translate: 14px 0; }
+  .route:has(~ .route:is(:hover, :focus-within)) { translate: -14px 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .route { transition: opacity .2s, box-shadow .2s, border-color .2s; }
+  .route:hover, .route:focus-within, .route:is(:hover, :focus-within) ~ .route, .route:has(~ .route:is(:hover, :focus-within)) { translate: none; scale: none; }
+  .router-list:has(.route:hover, .route:focus-within) .route:not(:hover, :focus-within) { scale: none; filter: none; }
+}
 .route h3 { font-size: var(--fs-h3); margin: 1.1rem 0 .6rem; }
 .route p { color: var(--ink-2); font-size: .98rem; flex: 1; }
 .route .btn { align-self: flex-start; margin-top: 1.5rem; }
