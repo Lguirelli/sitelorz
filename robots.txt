@@ -1,0 +1,3 @@
+User-agent: *
+Disallow: /
+# Configure siteUrl em src/config.mjs para liberar a indexação.
