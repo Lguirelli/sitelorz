@@ -30,10 +30,12 @@ const flowApp = () => {
   <div class="flowapp-bar">
     <span class="ui-dots" aria-hidden="true"><i></i><i></i><i></i></span>
     <div class="flow-tabs" role="group" aria-label="Destacar uma etapa do caminho do cliente">
+      <span class="flow-pill" aria-hidden="true"></span>
       ${stages.map((s, i) => `<button type="button" aria-pressed="${i === 0}" data-step="${i}">${s.label}</button>`).join('')}
     </div>
   </div>
   <div class="flowapp-body">
+    <span class="flow-focus" aria-hidden="true"></span>
     <ol class="flow-track">
       ${stages.map((s, i) => {
         const svc = services.find(x => x.slug === s.svc);

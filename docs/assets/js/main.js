@@ -91,7 +91,26 @@
   $$('[data-flow]').forEach(app => {
     const btns = $$('[data-step]', app);
     let i = 0, timer = null, visible = false, paused = false;
-    const go = n => { i = n; app.dataset.active = n; btns.forEach((b, k) => b.setAttribute('aria-pressed', k === n)); };
+    const body = $('.flowapp-body', app), pill = $('.flow-pill', app), focus = $('.flow-focus', app);
+    const stages = $$('.flow-stage', app);
+    let morphTimer;
+    // Morph: mede o alvo e desloca a pílula e o destaque até ele (tamanho e posição animados no CSS).
+    const place = () => {
+      const b = btns[i], t = b.parentElement.getBoundingClientRect(), r = b.getBoundingClientRect();
+      pill?.style.setProperty('--px', `${r.left - t.left}px`); pill?.style.setProperty('--pw', `${r.width}px`);
+      const card = $('.flow-card', stages[i]); if (!card || !focus) return;
+      const o = body.getBoundingClientRect(), c = card.getBoundingClientRect();
+      focus.style.setProperty('--fx', `${c.left - o.left}px`); focus.style.setProperty('--fy', `${c.top - o.top}px`);
+      focus.style.setProperty('--fw', `${c.width}px`); focus.style.setProperty('--fh', `${c.height}px`);
+      focus.dataset.accent = stages[i].dataset.accent;
+    };
+    const go = n => {
+      if (n !== i && app.classList.contains('is-ready') && !reduced.matches) { app.classList.add('is-morphing'); clearTimeout(morphTimer); morphTimer = setTimeout(() => app.classList.remove('is-morphing'), 320); }
+      i = n; app.dataset.active = n; btns.forEach((b, k) => b.setAttribute('aria-pressed', k === n)); place();
+    };
+    place(); requestAnimationFrame(() => requestAnimationFrame(() => app.classList.add('is-ready')));
+    if ('ResizeObserver' in window) new ResizeObserver(place).observe(app);
+    document.fonts?.ready.then(place);
     const tick = () => { stop(); if (!reduced.matches && visible && !paused && !document.hidden) timer = setTimeout(() => { go((i + 1) % btns.length); tick(); }, 3600); };
     const stop = () => clearTimeout(timer);
     btns.forEach((b, k) => b.addEventListener('click', () => { paused = true; stop(); go(k); }));

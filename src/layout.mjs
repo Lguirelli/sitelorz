@@ -4,7 +4,7 @@ import { esc, href, routeToFile } from './lib/html.mjs';
 import { services } from './data/services.mjs';
 import { icon, wordmark, arrow } from './components.mjs';
 
-const ASSET_VERSION = '2.1.0';
+const ASSET_VERSION = '2.2.0';
 const indexable = Boolean(config.siteUrl);
 export const absolute = route => config.siteUrl ? new URL(routeToFile(route).replace(/^index\.html$/, ''), config.siteUrl.replace(/\/+$/, '') + '/').href : null;
 
