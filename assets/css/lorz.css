@@ -291,7 +291,11 @@ main:focus { outline: none; }
 .ui { background: var(--bg); border: 1px solid var(--line); border-radius: var(--r-lg); box-shadow: var(--sh-3); overflow: hidden; font-family: var(--f-ui); }
 .ui-bar, .flowapp-bar { display: flex; align-items: center; gap: .9rem; height: 42px; padding: 0 .9rem; border-bottom: 1px solid var(--line); background: var(--bg-soft); }
 .ui-dots { display: flex; gap: 6px; flex: none; }
-.ui-dots i { width: 10px; height: 10px; border-radius: 50%; background: var(--line-2); }
+.ui-dots i { width: 12px; height: 12px; border-radius: 50%; box-shadow: inset 0 0 0 .5px rgb(0 0 0 / .18); }
+/* Os três botões clássicos de janela: fechar, minimizar e tela cheia. */
+.ui-dots i:nth-child(1) { background: #FF5F57; }
+.ui-dots i:nth-child(2) { background: #FEBC2E; }
+.ui-dots i:nth-child(3) { background: #28C840; }
 .ui-title { font-size: .78rem; color: var(--ink-3); padding: .25rem .7rem; border-radius: 6px; background: var(--bg); border: 1px solid var(--line); }
 .ui-body { padding: 1rem; }
 .ui-caption { margin-top: .8rem; font: 400 var(--fs-xs)/1.45 var(--f-ui); color: var(--ink-3); }
@@ -334,15 +338,24 @@ main:focus { outline: none; }
 /* Tela do funil (primeira dobra) ------------------------------------------- */
 .flowapp { position: relative; background: var(--bg); border: 1px solid var(--line); border-radius: var(--r-xl); box-shadow: var(--sh-3); font-family: var(--f-ui); }
 .flowapp-bar { border-radius: var(--r-xl) var(--r-xl) 0 0; height: 52px; }
-.flow-tabs { display: flex; gap: .25rem; margin-inline: auto; padding: .25rem; border-radius: 10px; background: var(--bg-sunk); }
-.flow-tabs button { padding: .4rem .85rem; border-radius: 7px; font-size: .82rem; font-weight: 700; color: var(--ink-3); transition: background var(--t-fast), color var(--t-fast), box-shadow var(--t-fast); }
-.flow-tabs button[aria-pressed="true"] { background: var(--bg); color: var(--ink); box-shadow: var(--sh-1); }
+.flow-tabs { position: relative; isolation: isolate; display: flex; gap: .25rem; margin-inline: auto; padding: .25rem; border-radius: 10px; background: var(--bg-sunk); }
+.flow-tabs button { position: relative; z-index: 1; padding: .4rem .85rem; border-radius: 7px; font-size: .82rem; font-weight: 700; color: var(--ink-3); transition: color var(--t-med) var(--ease-out); }
+.flow-tabs button[aria-pressed="true"] { color: var(--ink); }
+html:not(.js) .flow-tabs button[aria-pressed="true"] { background: var(--bg); box-shadow: var(--sh-1); }
+/* Morph: a pílula das abas e o destaque dos cartões deslizam e mudam de tamanho até a etapa ativa. */
+.flow-pill { position: absolute; z-index: 0; top: .25rem; left: 0; height: calc(100% - .5rem); width: var(--pw, 0); transform: translateX(var(--px, 0)); border-radius: 7px; background: var(--bg); box-shadow: var(--sh-1); }
+.flow-focus { position: absolute; z-index: 2; top: 0; left: 0; width: var(--fw, 0); height: var(--fh, 0); transform: translate(var(--fx, 0), var(--fy, 0)); border: 1.5px solid var(--accent); border-radius: 14px; box-shadow: 0 0 0 4px var(--accent-soft), var(--sh-2); pointer-events: none; opacity: 0; }
+.flowapp.is-ready .flow-focus { opacity: 1; }
+.flowapp.is-ready .flow-pill, .flowapp.is-ready .flow-focus { transition: transform .62s cubic-bezier(.34, 1.25, .45, 1), width .62s cubic-bezier(.34, 1.25, .45, 1), height .62s cubic-bezier(.34, 1.25, .45, 1), border-color .4s var(--ease-out), box-shadow .4s var(--ease-out), border-radius .62s var(--ease-out), opacity .3s; }
+.flowapp.is-morphing .flow-focus { border-radius: 22px; }
+html:not(.js) .flow-pill, html:not(.js) .flow-focus { display: none; }
 .flowapp-body { position: relative; padding: 1.4rem 1.4rem 5.6rem; }
 .flow-track { position: relative; display: grid; gap: 1rem; }
 .flow-track::before { content: ""; position: absolute; left: 21px; top: 22px; bottom: 22px; width: 2px; background: repeating-linear-gradient(var(--line-2) 0 6px, transparent 6px 11px); }
 .flow-stage { position: relative; display: grid; grid-template-columns: 44px 1fr; gap: 1rem; align-items: center; opacity: .55; transition: opacity var(--t-med) var(--ease-out); }
 .flow-node { position: relative; z-index: 1; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 12px; background: var(--bg); border: 1px solid var(--line); color: var(--ink-3); transition: background var(--t-med), color var(--t-med), border-color var(--t-med), transform var(--t-med) var(--ease-out); }
-.flow-node .svc-icon { width: 22px; height: 22px; stroke-width: 3.6; }
+.flow-node .svc-icon { width: 22px; height: 22px; stroke-width: 3.6; transition: transform .5s cubic-bezier(.34, 1.5, .5, 1); }
+.flowapp[data-active="0"] .flow-stage:nth-child(1) .flow-node .svc-icon, .flowapp[data-active="1"] .flow-stage:nth-child(2) .flow-node .svc-icon, .flowapp[data-active="2"] .flow-stage:nth-child(3) .flow-node .svc-icon { transform: scale(1.12); }
 .flow-card { display: grid; gap: .35rem; padding: .95rem 1rem; border-radius: 14px; border: 1px solid var(--line); background: var(--bg); box-shadow: var(--sh-1); transition: box-shadow var(--t-med), border-color var(--t-med), transform var(--t-med) var(--ease-out); }
 .flow-k { font-size: .72rem; font-weight: 700; color: var(--ink-3); }
 .flow-card b { font-size: .98rem; line-height: 1.3; color: var(--ink); }
@@ -356,7 +369,7 @@ main:focus { outline: none; }
 .flow-svc:hover { text-decoration: underline; }
 .flowapp[data-active="0"] .flow-stage:nth-child(1), .flowapp[data-active="1"] .flow-stage:nth-child(2), .flowapp[data-active="2"] .flow-stage:nth-child(3) { opacity: 1; }
 .flowapp[data-active="0"] .flow-stage:nth-child(1) .flow-node, .flowapp[data-active="1"] .flow-stage:nth-child(2) .flow-node, .flowapp[data-active="2"] .flow-stage:nth-child(3) .flow-node { background: var(--accent); border-color: var(--accent); color: var(--on-accent); transform: scale(1.06); }
-.flowapp[data-active="0"] .flow-stage:nth-child(1) .flow-card, .flowapp[data-active="1"] .flow-stage:nth-child(2) .flow-card, .flowapp[data-active="2"] .flow-stage:nth-child(3) .flow-card { border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft), var(--sh-2); transform: translateX(4px); }
+html:not(.js) .flow-stage:first-child .flow-card { border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft), var(--sh-2); transform: translateX(4px); }
 .flow-toast { position: absolute; right: 1.2rem; bottom: 1.2rem; left: 1.2rem; display: flex; align-items: center; gap: .8rem; padding: .7rem .9rem; border-radius: 14px; background: var(--surface-strong); color: var(--on-dark); box-shadow: var(--sh-2); transform: translateY(6px); opacity: 0; transition: opacity var(--t-med), transform var(--t-med) var(--ease-out); }
 .flowapp[data-active="2"] .flow-toast, html:not(.js) .flow-toast { opacity: 1; transform: none; }
 .flow-toast p { font-size: .85rem; line-height: 1.35; color: var(--on-dark-2); }
@@ -364,12 +377,32 @@ main:focus { outline: none; }
 .avatar { flex: none; display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; background: var(--cream); overflow: hidden; }
 .avatar .mascot { width: 34px; height: auto; transform: translateY(3px); }
 .flowapp > .ui-caption { position: absolute; top: 100%; left: 0; right: 0; text-align: center; }
-@media (prefers-reduced-motion: reduce) { .flow-stage, .flow-node, .flow-card, .flow-toast { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .flow-stage, .flow-node, .flow-card, .flow-toast, .flowapp.is-ready .flow-pill, .flowapp.is-ready .flow-focus { transition: none; } }
 
 /* Roteador do funil -------------------------------------------------------- */
 .router-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
-.route { position: relative; display: flex; flex-direction: column; padding: 1.75rem; border-radius: var(--r-lg); background: var(--bg); border: 1px solid var(--line); box-shadow: var(--sh-1); transition: box-shadow var(--t-med), transform var(--t-med) var(--ease-out), border-color var(--t-med); }
-.route:hover { box-shadow: var(--sh-2); transform: translateY(-3px); border-color: var(--line-2); }
+.route { --spring: cubic-bezier(.34, 1.36, .5, 1); position: relative; display: flex; flex-direction: column; padding: 1.75rem; border-radius: var(--r-lg); background: var(--bg); border: 1px solid var(--line); box-shadow: var(--sh-1); cursor: pointer; transition: translate .6s var(--spring), scale .6s var(--spring), filter .45s var(--ease-out), opacity .45s var(--ease-out), box-shadow .45s var(--ease-out), border-color .3s; }
+.js .route.reveal.is-in { transition: transform .8s var(--ease-out), translate .6s var(--spring), scale .6s var(--spring), filter .45s var(--ease-out), opacity .45s var(--ease-out), box-shadow .45s var(--ease-out), border-color .3s; transition-delay: 0s; }
+/* O card inteiro é o link: o ::after do botão cobre o card. */
+.route .btn::after { content: ""; position: absolute; inset: 0; border-radius: var(--r-lg); }
+.route .btn:active { transform: none; }
+.route:active { scale: 1.02; }
+.route:has(.btn:focus-visible) { outline: 2px solid var(--red-ink); outline-offset: 4px; }
+.route .btn:focus-visible { outline: none; }
+.route:hover, .route:focus-within { border-color: var(--line-2); box-shadow: var(--sh-3); }
+.route[data-stage="decide"]:hover, .route[data-stage="decide"]:focus-within { border-color: var(--surface-strong); }
+/* Morph de foco: o card ativo sobe e cresce; os vizinhos se afastam, encolhem e desfocam com a mesma mola. */
+@media (hover: hover) and (min-width: 861px) {
+  .route:hover, .route:focus-within { translate: 0 -8px; scale: 1.035; z-index: 2; }
+  .router-list:has(.route:hover, .route:focus-within) .route:not(:hover, :focus-within) { scale: .96; filter: blur(2px) saturate(.85); opacity: .72; }
+  .route:is(:hover, :focus-within) ~ .route { translate: 14px 0; }
+  .route:has(~ .route:is(:hover, :focus-within)) { translate: -14px 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .route { transition: opacity .2s, box-shadow .2s, border-color .2s; }
+  .route:hover, .route:focus-within, .route:is(:hover, :focus-within) ~ .route, .route:has(~ .route:is(:hover, :focus-within)) { translate: none; scale: none; }
+  .router-list:has(.route:hover, .route:focus-within) .route:not(:hover, :focus-within) { scale: none; filter: none; }
+}
 .route h3 { font-size: var(--fs-h3); margin: 1.1rem 0 .6rem; }
 .route p { color: var(--ink-2); font-size: .98rem; flex: 1; }
 .route .btn { align-self: flex-start; margin-top: 1.5rem; }
