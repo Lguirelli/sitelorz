@@ -1,0 +1,19 @@
+{
+  "name": "lorz-site",
+  "version": "2.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Site institucional e comercial da Lorz: gerador estático sem dependências de execução.",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "node build.mjs",
+    "dev": "node build.mjs && node scripts/serve.mjs",
+    "test": "node build.mjs && node scripts/check.mjs",
+    "qa": "node scripts/qa.mjs"
+  },
+  "devDependencies": {
+    "playwright-core": "^1.48.2"
+  }
+}
