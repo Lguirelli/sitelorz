@@ -10,14 +10,18 @@ Requer **Node.js 20+**. O site não tem dependências de execução. Para a audi
 npm run dev     # gera docs/ e abre em http://127.0.0.1:4173
 npm run build   # só gera docs/
 npm test        # gera e verifica links, âncoras, recursos, H1, títulos, descrições, eyebrows e travessões
+npm run deploy  # gera, verifica e publica docs/ na raiz da main do GitHub
 npm run qa      # Playwright: 14 páginas × 7 larguras × temas claro e escuro (rolagem, contraste AA, alvos de toque)
 ```
 
 ## Publicar no GitHub Pages
 
-1. Envie esta pasta para a raiz de um repositório.
-2. Rode `npm run build` e faça commit da pasta `docs/` junto.
-3. Em **Settings → Pages → Build and deployment**, escolha **Deploy from a branch**, branch `main`, pasta **`/docs`**.
+O site está em **https://lguirelli.github.io/sitelorz/**, servido pela raiz da branch `main` do repositório [Lguirelli/sitelorz](https://github.com/Lguirelli/sitelorz).
+
+- A `main` do GitHub guarda **só o site pronto**, com os HTML na raiz (Pages: *Deploy from a branch*, `main`, `/ (root)`).
+- O código-fonte fica na branch local `codigo`.
+- Para publicar uma alteração: `npm run deploy`. O comando gera `docs/`, roda as verificações e envia o conteúdo de `docs/` como um novo commit em cima da `main` remota, sem reescrever o histórico. Se nada mudou, ele avisa e não envia.
+- Na primeira publicação, o Git pede o login do GitHub (Git Credential Manager ou `gh auth login`).
 
 Todos os links são relativos, então o site funciona em `usuario.github.io/repositorio/` ou em domínio próprio.
 
