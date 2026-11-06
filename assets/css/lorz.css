@@ -241,12 +241,12 @@ h3, .lz-h3 { font: var(--text-h3); }
 .lz-hero__aside .lz-lead { color: var(--ink); }
 .lz-hero__more { grid-column: 1 / -1; }
 .lz-hero__more .lz-actions { margin-top: 0; }
-.lz-hero__figure { grid-column: 1 / -1; justify-self: end; width: min(11rem, 45%); margin-top: calc(-1 * var(--space-4)); }
+.lz-hero__figure { grid-column: 1 / -1; justify-self: center; width: min(100%, 26rem); }
 @media (min-width: 60rem) {
   .lz-hero__title { grid-column: 1 / 9; grid-row: 1; align-self: end; }
   .lz-hero__aside { grid-column: 1 / 7; grid-row: 2; }
   .lz-hero__more { grid-column: 1 / 9; grid-row: 3; }
-  .lz-hero__figure { grid-column: 9 / 13; grid-row: 1 / 4; align-self: center; justify-self: end; width: 100%; max-width: 22rem; margin-top: 0; }
+  .lz-hero__figure { grid-column: 8 / 13; grid-row: 1 / 4; align-self: center; justify-self: end; width: 100%; }
 }
 .lz-assure { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-4); margin-top: var(--space-5); font: var(--text-term-label); letter-spacing: .04em; text-transform: uppercase; color: var(--ink); }
 .lz-assure li { display: flex; gap: var(--space-2); align-items: center; }
@@ -268,7 +268,6 @@ h3, .lz-h3 { font: var(--text-h3); }
 @media (max-width: 39.98rem) { .lz-hide-sm { display: none; } }
 
 /* Faixa de ilustração entre seções */
-.lz-figure-band { padding-block: var(--space-7) 0; }
 /* SVG-01: figura Hairline (o L ligado aos três nós). O palco 5:4 fica centrado na faixa 21:9 (4:3 no celular),
    com as cores do site no lugar da paleta neutra do kernel: contorno em tinta, destaque na cor de link do tema. */
 .lz-nodes { position: relative; display: grid; place-items: center; width: 100%; aspect-ratio: var(--lz-ratio-sm); }
@@ -276,6 +275,20 @@ h3, .lz-h3 { font: var(--text-h3); }
 .lz-nodes__stage { height: 100%; max-width: 100%; --hairline-stroke: 1.4; --hl-plate: var(--surface-base); --hl-hi: var(--lz-link); --hl-edge: var(--ink); --hl-mid: var(--ink-muted); --hl-lo: var(--cream-400); }
 :root[data-theme="dark"] .lz-nodes__stage { --hl-lo: var(--navy-700); }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .lz-nodes__stage { --hl-lo: var(--navy-700); } }
+/* Hero da home: figura vazada (placas na cor da própria faixa), destacada só pelo traço: mais grosso e escuro, linhas internas incluídas,
+   na largura da caixa; a caixa é mais baixa (3:2) e recorta só o vazio de cima e de baixo do palco 5:4. */
+.lz-hero .lz-nodes { overflow: hidden; }
+.lz-hero .lz-hero__figure .lz-nodes__stage { position: absolute; left: 0; top: 50%; translate: 0 -50%; width: 100%; height: auto; max-width: none; --hairline-stroke: 2; --hl-plate: var(--surface-base); --hl-mid: var(--ink); --hl-edge: var(--ink); --hl-lo: var(--ink-muted); }
+/* Na faixa do hero, o nó que acende não pode ter a cor do fundo: no claro (laranja) o site acende em creme; no escuro (vinho) social acende em navy. */
+.lz-hero .lz-nodes__stage [data-node="site"] { --lz-node: var(--cream-50); --lz-node-line: var(--navy-900); --lz-on-node: var(--navy-900); }
+:root[data-theme="dark"] .lz-hero .lz-nodes__stage [data-node="site"] { --lz-node: var(--orange-500); --lz-node-line: var(--orange-500); --lz-on-node: var(--navy-900); }
+:root[data-theme="dark"] .lz-hero .lz-nodes__stage [data-node="social"] { --lz-node: var(--navy-900); --lz-node-line: var(--cream-200); --lz-on-node: var(--cream-50); }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .lz-hero .lz-nodes__stage [data-node="site"] { --lz-node: var(--orange-500); --lz-node-line: var(--orange-500); --lz-on-node: var(--navy-900); }
+  :root:not([data-theme="light"]) .lz-hero .lz-nodes__stage [data-node="social"] { --lz-node: var(--navy-900); --lz-node-line: var(--cream-200); --lz-on-node: var(--cream-50); }
+}
+/* A leitura sobe para o canto vazio de cima, fora do desenho. */
+.lz-hero .lz-nodes__read { top: var(--space-2); bottom: auto; left: var(--space-2); right: auto; z-index: 1; text-align: left; }
 /* Cada nó acende na sua cor: social em vermelho, site em laranja, ferramentas na tinta do tema (navy no claro, creme no escuro).
    --lz-node-line é o traço (cabo e contorno, acima de 3:1 contra o fundo); --lz-node é o preenchimento do nó aceso, com
    contorno em tinta; --lz-on-node são as marcas sobre ele. O personagem fica na cor da tinta. */
