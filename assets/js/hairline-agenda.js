@@ -90,6 +90,8 @@ function mount({ stage, svg, read }, value) {
       pt.dot.setAttribute("class", "dot" + (k === a ? "" : " off"));
     });
     face.classList.toggle("hi", a < 0);
+    // the chosen part comes nearest the viewer, so it is painted last (rule 06: move the group, do not redraw)
+    if (a >= 0) g.append(parts.find((pt) => PARTS.indexOf(pt.p) === a).grp);
     read.textContent = a < 0 ? "rest" : PARTS[a].name;
     B.wake();
   }
