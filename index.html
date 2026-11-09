@@ -102,7 +102,7 @@ h3,.h3{font:700 21px/1.25 var(--font-heading);letter-spacing:-.01em}
 .band-inverse .display em{color:var(--accent)}
 
 /* ---------- cursor flock ---------- */
-#crew{position:fixed;inset:0;pointer-events:none;z-index:60;overflow:hidden}
+#crew{position:absolute;left:0;top:0;width:100%;height:100vh;pointer-events:none;z-index:60;overflow:hidden}
 .wk{position:absolute;left:0;top:0;will-change:transform;transition:opacity .2s ease}
 .wk.off{opacity:0}
 .wk-lift{background:var(--bg2)!important;box-shadow:0 30px 60px -24px rgba(0,0,0,.65),0 0 0 1.5px var(--line-strong)!important;transform-origin:center}
@@ -1935,7 +1935,7 @@ const TEXTS = 'h3,h4,p,li > span:last-child,footer > span,.num,legend,.needs lab
 const SKIP = 'svg,script,style,textarea,select,option,.hl-read,.ans,.compare';
 function textsIn(el){
   const ok = (t) => !t.closest(SKIP) && (t.textContent || '').trim();
-  let blocks = [...el.querySelectorAll(TEXTS)].filter(t => t.offsetWidth && ok(t));
+  let blocks = [...el.querySelectorAll(TEXTS)].filter(t => t.offsetWidth && t.getClientRects().length && ok(t));
   blocks = blocks.filter(t => !blocks.some(u => u !== t && u.contains(t)));
   if (!el._wrapped){
     // loose text (a button's label, a link, a tag) gets its own span so it can be typed without hiding its box
@@ -1950,7 +1950,8 @@ function textsIn(el){
       n.replaceWith(frag);
     });
   }
-  const loose = [...el.querySelectorAll('.tw')].filter(t => ok(t) && !blocks.some(b => b.contains(t)));
+  // only text that is actually on screen in this layout (a hidden menu item has no place to be typed in)
+  const loose = [...el.querySelectorAll('.tw')].filter(t => t.offsetWidth && t.getClientRects().length && ok(t) && !blocks.some(b => b.contains(t)));
   return [...blocks, ...loose].sort((a, b) => (a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1));
 }
 const hideText = (t) => { t.style.clipPath = 'inset(-6px 100% -6px -6px)'; };
@@ -1969,14 +1970,16 @@ const workers = TEAM.map(([name, c, i, role]) => {
 });
 function setKind(w, k){ if (w.kind !== k){ w.kind = k; w.cur.innerHTML = CUR[k]; w.root.style.setProperty('--hx', HOT[k][0]); w.root.style.setProperty('--hy', HOT[k][1]); } }
 function click(w){ w.root.classList.remove('click'); void w.root.offsetWidth; w.root.classList.add('click'); }
-function caret(w, x, y, h, on){ w.car.classList.toggle('on', on); if (on){ w.car.style.transform = `translate(${x}px,${y}px)`; w.car.style.height = h + 'px'; } }
+// everything the crew draws lives in page coordinates, so it scrolls with the content (no frame of lag)
+const pg = (x, y) => `translate(${x + scrollX}px,${y + scrollY}px)`;
+function caret(w, x, y, h, on){ if (on){ w.car.style.transform = pg(x, y); w.car.style.height = h + 'px'; } w.car.classList.toggle('on', on); }
 const offscreen = (x, y) => { const cx = innerWidth/2, cy = innerHeight/2, a = Math.atan2(y - cy, x - cx) || Math.random()*6.28, R = Math.hypot(cx, cy) + 80; return [cx + Math.cos(a)*R, cy + Math.sin(a)*R]; };
 const at = (r, fx, fy) => [r.left + r.width*fx, r.top + r.height*fy];
 function home(el){ const r = el.getBoundingClientRect(), o = el._op || { dx: 0, dy: 0, s: 1 }; return { left: r.left - o.dx, top: r.top - o.dy, width: r.width / o.s, height: r.height / o.s }; }
 function pose(el, dx, dy, s){ el._op = { dx, dy, s }; el.style.translate = `${dx}px ${dy}px`; el.style.scale = String(s); }
 function unpose(el){ el._op = null; el.style.translate = ''; el.style.scale = ''; el.style.transformOrigin = ''; requestAnimationFrame(() => { el.style.transition = ''; }); }
 function drawSel(w, r, fx = 1, fy = 1){
-  Object.assign(w.sel.style, { transform: `translate(${r.left - 4}px,${r.top - 4}px)`, width: r.width*fx + 8 + 'px', height: r.height*fy + 8 + 'px' });
+  Object.assign(w.sel.style, { transform: pg(r.left - 4, r.top - 4), width: r.width*fx + 8 + 'px', height: r.height*fy + 8 + 'px' });
   $('b', w.sel).textContent = Math.round(r.width*fx) + ' × ' + Math.round(r.height*fy);
 }
 function label(w, verb, el){ $('span', w.sel).textContent = verb + ' · ' + nameOf(el); }
@@ -2068,6 +2071,11 @@ function editStep(w, el, block, first){
     },
     end: () => { block.classList.remove('wk-hl'); block.textContent = neu; block._new = null; block._edit = false; caret(w, 0, 0, 0, false); } };
 }
+// a viewport point, turned into the copy's own position inside the section that holds it
+function placeGhost(g, x, y, s){
+  const op = g.offsetParent || document.body, o = op.getBoundingClientRect();
+  g.style.transform = `translate(${x - o.left - op.clientLeft}px,${y - o.top - op.clientTop}px) scale(${s})`;
+}
 function later(task){ textsIn(task.el).forEach(hideText); task.next = { el: task.el, kind: 'inside', done: task.done }; }
 function plan(w, task){
   const el = task.el, kind = task.kind, steps = task.steps = [];
@@ -2095,15 +2103,20 @@ function plan(w, task){
         ghost = task.ghost = src.cloneNode(true);
         ghost.querySelectorAll('[id]').forEach(n => n.removeAttribute('id')); ghost.removeAttribute('id');
         ghost.setAttribute('aria-hidden', 'true'); ghost.classList.add('built');
-        Object.assign(ghost.style, { position: 'fixed', left: '0', top: '0', margin: '0', width: r.width + 'px', height: r.height + 'px', translate: 'none', transition: 'none', zIndex: '55', pointerEvents: 'none', clipPath: '' });
+        Object.assign(ghost.style, { position: 'absolute', left: '0', top: '0', visibility: 'hidden', margin: '0', width: r.width + 'px', height: r.height + 'px', translate: 'none', transition: 'none', zIndex: '55', pointerEvents: 'none', clipPath: '' });
         ghost.classList.add('wk-lift');
+        // placed on top of the original before it is shown, so it never appears anywhere else
         src.parentNode.appendChild(ghost);
-        task.slot = document.createElement('div'); task.slot.className = 'wk-slot'; task.slot.style.cssText = w.root.style.cssText; crewEl.prepend(task.slot);
+        placeGhost(ghost, r.left, r.top, 1);
+        ghost.style.visibility = '';
+        task.slot = document.createElement('div'); task.slot.className = 'wk-slot'; task.slot.style.cssText = w.root.style.cssText;
+        { const H = home(el); Object.assign(task.slot.style, { transform: pg(H.left, H.top), width: H.width + 'px', height: H.height + 'px' }); }
+        crewEl.prepend(task.slot);
       },
       step: (e) => {
         const a = src.getBoundingClientRect(), b = home(el), x = a.left + (b.left - a.left) * e, y = a.top + (b.top - a.top) * e - Math.sin(Math.PI * e) * 18;
-        ghost.style.transform = `translate(${x}px,${y}px) scale(${1 + Math.sin(Math.PI * Math.min(1, e * 1.4)) * .02})`;
-        Object.assign(task.slot.style, { transform: `translate(${b.left}px,${b.top}px)`, width: b.width + 'px', height: b.height + 'px' });
+        placeGhost(ghost, x, y, 1 + Math.sin(Math.PI * Math.min(1, e * 1.4)) * .02);
+        Object.assign(task.slot.style, { transform: pg(b.left, b.top), width: b.width + 'px', height: b.height + 'px' });
         const r = { left: x, top: y, width: a.width, height: a.height }; drawSel(w, r); return at(r, .5, .5);
       } });
     // dropped: the duplicate becomes the new part, still carrying the original's words
@@ -2179,7 +2192,9 @@ function assign(){
     const [tx, ty] = at(H, 0, 0);
     // each cursor jumps from where it stopped; the first time, it comes in from the edge
     if (!w.born){ [w.x, w.y] = offscreen(tx, ty); w.born = true; }
-    w.task = task; w.pi = 0; w.root.classList.remove('off');
+    w.task = task; w.pi = 0;
+    { const [hx, hy] = HOT[w.kind || 'arrow']; w.root.style.transform = pg(w.x - hx, w.y - hy); }
+    w.root.classList.remove('off');
     plan(w, task);
     if (!task.steps.length){ w.state = 'rest'; w.root.classList.add('off'); finish(task); return assign(); }
     hopTo(w, performance.now());
@@ -2196,6 +2211,8 @@ function hopTo(w, now){
 }
 function tick(now){
   raf = 0;
+  const docH = document.documentElement.scrollHeight;
+  if (crewEl._h !== docH){ crewEl._h = docH; crewEl.style.height = docH + 'px'; }
   let busy = false;
   for (const w of workers){
     if (w.state === 'rest') continue;
@@ -2204,7 +2221,7 @@ function tick(now){
     if (w.state === 'hop'){
       const [tx, ty] = s.aim();
       w.x = w.from[0] + (tx - w.from[0]) * e; w.y = w.from[1] + (ty - w.from[1]) * e - Math.sin(Math.PI * e) * w.hop;
-      if (p >= 1){ w.state = 'work'; w.t0 = now; w.dur = s.dur; w.sel.classList.add('on'); click(w); s.begin && s.begin(); }
+      if (p >= 1){ w.state = 'work'; w.t0 = now; w.dur = s.dur; click(w); s.begin && s.begin(); [w.x, w.y] = s.step(0, 0); w.sel.classList.add('on'); }
     } else if (w.state === 'work'){
       [w.x, w.y] = s.step(e, p);
       if (p >= 1){ s.end && s.end(); w.pi++; if (w.pi < task.steps.length) hopTo(w, now); else { w.state = 'hold'; w.t0 = now; w.dur = 100 * pace; } }
@@ -2217,7 +2234,7 @@ function tick(now){
       }
     }
     const [hx, hy] = HOT[w.kind || 'arrow'];
-    w.root.style.transform = `translate(${w.x - hx}px,${w.y - hy}px)`;
+    w.root.style.transform = pg(w.x - hx, w.y - hy);
   }
   if (busy && crewOn()) raf = requestAnimationFrame(tick);
 }
