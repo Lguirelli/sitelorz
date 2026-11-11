@@ -1,40 +1,46 @@
 /* ========== 6) principais projetos: carrossel em perspectiva ========== */
-/* Os projetos ficam todos aqui. Para incluir, remover ou mudar a ordem, edite esta lista.
+/* Os projetos ficam todos aqui. Para incluir, remover ou mudar a ordem, edite esta lista
+   (o conteúdo das páginas de cada projeto fica em src/projetos_pages.py).
    name, category  nome e tipo de solução
-   description     uma frase de contexto: o que é o site e para quem
-   features        o que cada funcionalidade faz (uma frase por item; até três cabem bem)
+   tagline         o que o site resolve, numa linha curta (aparece sob o nome)
+   description     o que é o site e para quem, em linguagem de cliente
+   features        o que o site faz por quem visita (uma frase por item; até três cabem bem)
+   page            a página do projeto, com o site funcionando e a explicação completa
    image           retrato 680×1100 em assets/projetos/ (as capturas do projeto compostas sobre uma cor da Lorz)
    bg              versão pequena da captura, usada desfocada no fundo da seção
    alt             o que a imagem mostra, para leitores de tela
    status          'real' (trabalho para um negócio real), 'conceitual' (estudo sem cliente) ou 'demonstrativo' (exemplo fictício)
-   url             destino do botão "Abrir projeto"; sem url, o botão não aparece */
+   url             endereço publicado (opcional); sem url, só a página do projeto aparece */
 const PROJECTS = [
   { name: 'Flat Jardim Serrano', category: 'Site completo · Hospedagem', status: 'real', url: null,
+    tagline: 'Reservas pelo WhatsApp, com a mensagem pronta', page: 'projeto-flat-jardim-serrano.html',
     image: 'assets/projetos/flat.jpg', bg: 'assets/projetos/flat-fundo.jpg',
     alt: 'Site do Flat Jardim Serrano no computador e no celular, com o seletor de flats em destaque',
-    description: 'Site dos sete flats privativos para casais do Flat Jardim Serrano, em Serra Negra (SP).',
+    description: 'Site de uma hospedagem com sete flats para casais. Ajuda o hóspede a escolher e envia o pedido de reserva pronto para o WhatsApp.',
     features: [
-      'Seletor de flats: você marca o que não pode faltar e vê só as unidades que têm tudo.',
-      'Consultar datas: o formulário conta as noites e abre o WhatsApp com a mensagem pronta.',
-      'Uma página por flat, com fotos, comodidades e regras, no tema claro ou escuro.',
+      'O hóspede marca o que não pode faltar e vê só os flats que têm tudo.',
+      'Escolhe as datas, e o site abre o WhatsApp com a mensagem escrita e as noites contadas.',
+      'Cada flat tem sua página, com fotos, o que está incluso e as regras da casa.',
     ] },
   { name: 'Brasa', category: 'Site e pedido online · Hamburgueria', status: 'conceitual', url: null,
+    tagline: 'Pedido online, da sacola ao Pix', page: 'projeto-brasa.html',
     image: 'assets/projetos/brasa.jpg', bg: 'assets/projetos/brasa-fundo.jpg',
     alt: 'Site da Brasa com o hambúrguer em 3D separado em camadas, a sacola no celular e o pagamento por Pix',
-    description: 'Site de hamburgueria com cardápio, história da casa e pedido online, hoje em modo de demonstração.',
+    description: 'Site de hamburgueria com cardápio e pedido online: o cliente monta o pedido e paga sem sair do site. Projeto conceitual, em versão de teste.',
     features: [
-      'Hambúrguer em 3D: arraste para girar; ao rolar a página, as camadas se separam.',
-      'Pedido em quatro passos: sacola, entrega ou retirada, pagamento e revisão.',
-      'Pix com código copia e cola, cartão na maquininha ou dinheiro com troco.',
+      'Na abertura, o hambúrguer em 3D gira com o dedo e se desmonta ao descer a página.',
+      'A sacola fica guardada, mesmo se o cliente fechar a página sem querer.',
+      'Entrega ou retirada, e pagamento por Pix, cartão na entrega ou dinheiro com troco.',
     ] },
   { name: 'Isadora Guirelli', category: 'Landing page · Saúde capilar', status: 'real', url: null,
+    tagline: 'Orienta antes do primeiro contato', page: 'projeto-isadora-guirelli.html',
     image: 'assets/projetos/isa.jpg', bg: 'assets/projetos/isa-fundo.jpg',
     alt: 'Site de Isadora Guirelli no computador e no celular, com os caminhos Sinais de atenção e Cuidados',
-    description: 'Site de tricologia para quem percebeu queda ou afinamento dos fios e quer entender os próximos passos.',
+    description: 'Site de uma especialista em saúde capilar. Explica os sinais de queda e afinamento dos fios e leva a pessoa até o WhatsApp.',
     features: [
-      'Quatro caminhos logo no início: sinais, cuidados, como funciona e contato.',
-      'Páginas que explicam o que observar nos fios e quando procurar um dermatologista.',
-      'Atalho do WhatsApp no celular, que some quando outro contato já está na tela.',
+      'Quatro atalhos logo no início levam cada pessoa ao que ela procura.',
+      'Páginas curtas explicam o que observar e quando procurar um dermatologista.',
+      'No celular, o botão de WhatsApp acompanha a leitura sem cobrir o texto.',
     ] },
 ];
 const STATUS = { demonstrativo: 'Projeto demonstrativo', conceitual: 'Projeto conceitual', real: '', publicado: '' };
@@ -42,16 +48,18 @@ const STATUS = { demonstrativo: 'Projeto demonstrativo', conceitual: 'Projeto co
 function capNode(p, i, n, part){
   const flag = STATUS[p.status] || '', c = document.createElement('div'); c.className = 'pj-cap';
   if (part === 'head'){
-    c.innerHTML = `<p class="pj-meta"><span class="pj-cat"></span>${flag ? '<span class="pj-flag"></span>' : ''}</p>
-      <h3 class="pj-name"></h3><i class="pj-rule" aria-hidden="true"></i><span class="sr">Projeto ${i + 1} de ${n}.</span>`;
-    c.querySelector('.pj-cat').textContent = p.category; c.querySelector('.pj-name').textContent = p.name;
+    c.innerHTML = `${flag ? '<p class="pj-meta"><span class="pj-flag"></span></p>' : ''}
+      <h3 class="pj-name"></h3><i class="pj-rule" aria-hidden="true"></i><p class="pj-stack"></p><span class="sr">${p.category}. Projeto ${i + 1} de ${n}.</span>`;
+    c.querySelector('.pj-name').textContent = p.name;
+    c.querySelector('.pj-stack').textContent = p.tagline || '';
     if (flag) c.querySelector('.pj-flag').textContent = flag;
   } else {
-    c.innerHTML = `<p class="pj-desc"></p>${(p.features || []).length ? '<ul class="pj-feats" aria-label="Funcionalidades"></ul>' : ''}
-      ${p.url ? '<a class="pj-open btn" target="_blank" rel="noopener">Abrir projeto<span class="sr"> (abre em nova aba)</span></a>' : ''}`;
+    c.innerHTML = `<p class="pj-desc"></p>${(p.features || []).length ? '<ul class="pj-feats" aria-label="O que o site faz"></ul>' : ''}
+      <p class="pj-links">${p.page ? '<a class="pj-open btn"></a>' : ''}${p.url ? '<a class="pj-site" target="_blank" rel="noopener">Abrir o site<span class="sr"> (abre em nova aba)</span></a>' : ''}</p>`;
     c.querySelector('.pj-desc').textContent = p.description;
     (p.features || []).forEach(f => { const li = document.createElement('li'); li.textContent = f; c.querySelector('.pj-feats').appendChild(li); });
-    if (p.url) c.querySelector('.pj-open').href = p.url;
+    if (p.page){ const a = c.querySelector('.pj-open'); a.href = p.page; a.textContent = 'Ver e testar o projeto'; }
+    if (p.url) c.querySelector('.pj-site').href = p.url;
   }
   [...c.children].forEach((k, m) => k.style.setProperty('--i', m));
   return c;
@@ -70,14 +78,15 @@ function capNode(p, i, n, part){
   for (let j = 0; j < N; j++){
     const p = PROJECTS[j % n], el = document.createElement('div');
     el.className = 'pj-card'; el.dataset.j = j;
-    el.innerHTML = `<div class="pj-lift"><img src="${p.image}" alt="" width="680" height="1100" decoding="async" ${j < n ? '' : 'loading="lazy"'} draggable="false"><span class="pj-dim"></span><span class="pj-peek" aria-hidden="true"><span class="pj-peek-cat"></span><b class="pj-peek-name"></b></span></div>`;
-    el.querySelector('.pj-peek-cat').textContent = p.category; el.querySelector('.pj-peek-name').textContent = p.name;
+    el.innerHTML = `<div class="pj-lift"><img src="${p.image}" alt="" width="680" height="1100" decoding="async" ${j < n ? '' : 'loading="lazy"'} draggable="false"><span class="pj-dim"></span><span class="pj-peek" aria-hidden="true"><b class="pj-peek-name"></b></span></div>`;
+    el.querySelector('.pj-peek-name').textContent = p.name;
     track.appendChild(el); panels.push({ el, pos: 0 });
   }
   let active = 0, R = 2;   // R: how many neighbours show on each side
 
-  // where each offset sits: the centre in front, neighbours turned toward it, the far ones smaller and behind
-  const X = [0, .84, 1.52, 2.1], S = [1, .86, .72, .6], Y = [0, 24, 30, 34], Z = [0, -70, -150, -230], SH = [0, .4, .62, .85];
+  // where each offset sits (as in the reference): the centre in front; the neighbours almost touching it and turned
+  // toward it, so the edge facing the centre is the taller one; the far ones smaller, further back and darker
+  const X = [0, .9, 1.6, 2.15], S = [1, .84, .68, .56], Y = [0, 20, 26, 30], Z = [0, -60, -150, -240], SH = [0, .34, .58, .85];
   const XM = [0, 1.02, 1.9], SM = [1, .88, .76], YM = [0, 10, 14];
   function place(pnl, pos){
     const a = Math.abs(pos), s = Math.sign(pos), mob = R === 1, k = Math.min(a, mob ? 2 : 3);
@@ -85,7 +94,7 @@ function capNode(p, i, n, part){
     const st = pnl.el.style;
     st.setProperty('--x', (s * x).toFixed(3));
     st.setProperty('--s', (mob ? SM : S)[k]);
-    st.setProperty('--ry', (-s * (mob ? YM : Y)[k]) + 'deg');
+    st.setProperty('--ry', (s * (mob ? YM : Y)[k]) + 'deg');
     st.setProperty('--z', (mob ? 0 : Z[k]) + 'px');
     st.setProperty('--sh', a === 0 ? 0 : SH[Math.min(a, 3)]);
     st.zIndex = 20 - a;
@@ -141,10 +150,12 @@ function capNode(p, i, n, part){
 
   $('.pj-arrow.prev', sec).addEventListener('click', () => go(-1));
   $('.pj-arrow.next', sec).addEventListener('click', () => go(1));
-  // a click on a side panel brings it to the centre (it never opens the project)
+  // a click on a side panel brings it to the centre; a click on the centre one opens the project's page
+  // (the keyboard and screen readers reach the same page through the link below the carousel)
   track.addEventListener('click', (e) => {
     if (dragged) return;
-    const card = e.target.closest('.pj-card'); if (!card || card.classList.contains('on')) return;
+    const card = e.target.closest('.pj-card'); if (!card) return;
+    if (card.classList.contains('on')){ const p = PROJECTS[active % n]; if (p.page) location.href = p.page; return; }
     go(shortest(+card.dataset.j));
   });
   stage.addEventListener('keydown', (e) => {
@@ -205,10 +216,14 @@ function capNode(p, i, n, part){
   // sizes follow the stage; on small screens one neighbour peeks on each side and the text sits below
   function measure(){
     const W = stage.clientWidth, mob = matchMedia('(max-width: 899px)').matches;
-    R = mob ? 1 : Math.min(2, Math.floor((n - 1) / 2));   // with few projects, no copy shows twice on screen
-    let ph;
+    R = mob ? 1 : 2;   // five panels on wide screens, as in the reference (with three projects, two of them repeat at the ends)
+    let ph; stage.style.removeProperty('--sth');
     if (mob){ pw = Math.min(W * .74, 360); ph = pw * 1.18; }
-    else { const H = track.clientHeight; ph = H * .8; pw = Math.min(ph * 680 / 1100, W * .25); ph = pw * 1100 / 680; }
+    else {
+      // the panel is sized by the viewport height and the stage width; the stage then hugs it, so no empty band is left
+      const H = track.clientHeight; ph = H * .8; pw = Math.min(ph * 680 / 1100, W * .19); ph = pw * 1100 / 680;
+      stage.style.setProperty('--sth', Math.round(ph + 110) + 'px');
+    }
     stage.style.setProperty('--pw', pw.toFixed(1) + 'px'); stage.style.setProperty('--ph', ph.toFixed(1) + 'px');
     // the caption box keeps the height of the tallest project, so changing project never moves the page
     // (the head only needs it on small screens, where it sits in the flow; the explanation always does)

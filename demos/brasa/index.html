@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f4e7cd">
+<title>Brasa · Clássico da Brasa, R$ 29</title>
+<meta name="description" content="Hamburgueria de bairro que começou na garagem de dois irmãos, com uma chapa usada e um balcão feito de porta. O Clássico da Brasa custa R$ 29.">
+<link rel="icon" href="assets/brasa.svg" type="image/svg+xml">
+<link rel="stylesheet" href="estilo.css">
+</head>
+<body class="home">
+<a class="skip" href="#cardapio">Pular para o cardápio</a>
+
+<header class="topo">
+  <a class="logo" href="#inicio" aria-label="Brasa, início"><img src="assets/brasa.svg" width="40" height="40" alt=""><span>Brasa</span></a>
+  <nav aria-label="Principal">
+    <a href="#cardapio">Cardápio</a>
+    <a href="#preparo">Preparo</a>
+    <a href="#casa">A casa</a>
+    <a href="#historia">História</a>
+  </nav>
+  <button id="bag" class="sacola" type="button" aria-label="Abrir sacola, 0 itens">Sacola <b aria-hidden="true">0</b></button>
+</header>
+
+<main>
+<div class="hero-run">
+  <section class="hero" id="inicio" aria-labelledby="hero-titulo">
+    <div class="hero-copy">
+      <h1 id="hero-titulo"><span>Clássico</span> <span class="h1-mostarda">da Brasa</span></h1>
+      <div class="hero-oferta">
+        <p class="etiqueta etiqueta-grande" aria-label="Preço: 29 reais"><span>R$</span>29</p>
+        <p class="hero-texto">Pão tostado na chapa, carne com crosta, queijo mole nas bordas e tomate cortado grosso. O hambúrguer do primeiro sábado na garagem.</p>
+      </div>
+      <a class="botao botao-mostarda" href="#cardapio">Ver o cardápio</a>
+    </div>
+    <div class="hero-palco">
+      <img class="reticula" src="assets/reticula.svg" alt="" width="600" height="600">
+      <div id="model" tabindex="0" role="group" aria-label="Hambúrguer 3D do Clássico da Brasa. Arraste ou use as setas para girar.">
+        <span id="state" role="status">Carregando o hambúrguer 3D…</span>
+      </div>
+    </div>
+    <p class="hero-rodape"><span>Arraste o lanche para girar</span><span>Role a página para separar as camadas</span></p>
+  </section>
+</div>
+
+<section class="cardapio" id="cardapio" aria-labelledby="cardapio-titulo">
+  <div class="cardapio-cabeca">
+    <h2 id="cardapio-titulo">Cardápio do balcão</h2>
+    <p>Quatro lanches, todos no pão tostado na chapa. Comece pelo Clássico. Se preferir, troque a carne por frango crocante ou cogumelos.</p>
+  </div>
+  <div class="filtros" id="filters" role="group" aria-label="Filtrar o cardápio"></div>
+  <div class="cardapio-lista" id="menuTrack" aria-live="polite"></div>
+</section>
+
+<section class="preparo" id="preparo" aria-labelledby="preparo-titulo">
+  <div class="preparo-texto">
+    <h2 id="preparo-titulo">A ordem da chapa</h2>
+    <ol class="passos">
+      <li>O miolo do pão vai primeiro para a chapa, até pegar cor.</li>
+      <li>A carne ganha uma crosta fina.</li>
+      <li>O queijo entra ainda no calor e amolece nas bordas.</li>
+      <li>No balcão: molho no pão de baixo, carne com queijo, tomate.</li>
+      <li>A tampa fecha o lanche por último.</li>
+    </ol>
+    <a class="botao botao-carvao" href="preparo.html">Ver o preparo inteiro</a>
+  </div>
+  <figure class="preparo-figura">
+    <img src="assets/5.webp" alt="Pão de hambúrguer sobre papel de embrulho, entre ramos de salsa, cebolinha, tomilho e manjericão" width="418" height="418" loading="lazy">
+    <figcaption>O pão antes da chapa.</figcaption>
+  </figure>
+</section>
+
+<section class="casa" id="casa" aria-labelledby="casa-titulo">
+  <img src="assets/4.webp" alt="Duas mãos segurando um hambúrguer com queijo escorrendo" width="418" height="418" loading="lazy">
+  <div class="casa-texto">
+    <h2 id="casa-titulo">Uma pessoa por vez</h2>
+    <p>Na primeira cozinha da Brasa só cabia uma pessoa diante da chapa. Enquanto um tostava o pão, o outro esperava no balcão com o queijo na mão. O Clássico ainda é montado nessa ordem.</p>
+    <a class="botao botao-creme" href="casa.html">Conhecer a casa</a>
+  </div>
+</section>
+
+<section class="fatos" aria-labelledby="fatos-titulo">
+  <h2 id="fatos-titulo">A garagem em números</h2>
+  <ul class="fatos-lista">
+    <li><strong>2</strong><span>irmãos, Lia e Davi</span></li>
+    <li><strong>1</strong><span>chapa usada</span></li>
+    <li><strong>12</strong><span>pães no primeiro sábado</span></li>
+    <li><strong><small>R$</small>29</strong><span>o Clássico, até hoje</span></li>
+  </ul>
+</section>
+
+<section class="historia" id="historia" aria-labelledby="historia-titulo">
+  <div class="historia-texto">
+    <h2 id="historia-titulo">Como nasceu a Brasa</h2>
+    <p class="historia-abertura">A Brasa começou na garagem dos irmãos Lia e Davi, com uma chapa usada e um balcão feito de uma porta antiga. No primeiro sábado, compraram doze pães para servir aos vizinhos.</p>
+    <p>Lia tostava o pão enquanto Davi terminava a carne com queijo. Antes de fecharem, já tinham pedido para guardar dois lanches para o sábado seguinte. O nome veio depois, do apelido do pai escrito na capa de um caderno de receitas.</p>
+    <a class="link-texto" href="historias.html">Ler a história inteira</a>
+  </div>
+  <figure class="historia-figura">
+    <img src="assets/8.webp" alt="Homem de olhos fechados mordendo um hambúrguer com as duas mãos" width="418" height="418" loading="lazy">
+  </figure>
+</section>
+
+<section class="clube" id="clube" aria-labelledby="clube-titulo">
+  <img src="assets/7.webp" alt="Cliente sorrindo com o rosto apoiado na mão" width="418" height="418" loading="lazy">
+  <div class="clube-texto">
+    <h2 id="clube-titulo">Entre para o clube</h2>
+    <p>Deixe seu e-mail para receber o aviso quando sair lanche novo do balcão. Este formulário é uma demonstração e não envia nada.</p>
+    <form novalidate>
+      <label for="email">Seu e-mail</label>
+      <div class="campo">
+        <input id="email" name="email" type="email" required autocomplete="email" placeholder="voce@exemplo.com" aria-describedby="notice">
+        <button class="botao botao-carvao" type="submit">Participar</button>
+      </div>
+      <p id="notice" role="status"></p>
+    </form>
+  </div>
+</section>
+</main>
+
+<footer class="rodape">
+  <p class="rodape-marca" aria-hidden="true">Brasa</p>
+  <p>Hambúrguer na chapa desde o primeiro sábado na garagem de Lia e Davi.</p>
+  <nav aria-label="Rodapé"><a href="casa.html">A casa</a><a href="preparo.html">Preparo</a><a href="historias.html">Histórias</a><a href="#inicio">Voltar ao início</a></nav>
+</footer>
+
+<dialog aria-labelledby="title">
+  <button id="close" type="button" aria-label="Fechar"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="2.5" stroke-linecap="square"/></svg></button>
+  <h2 id="title"></h2>
+  <div id="body"></div>
+</dialog>
+
+<script src="vendor/three.min.js"></script>
+<script src="vendor/GLTFLoader.js"></script>
+<script src="assets/modelo.js"></script>
+<script src="modelo.js"></script>
+<script src="site.js"></script>
+<script src="pedido.js"></script>
+</body>
+</html>

@@ -19,6 +19,27 @@ def mock(n):
 e = html.escape
 def icon(i): return f'<span class="ic" aria-hidden="true"><svg><use href="#{i}"/></svg></span>'
 
+
+# the parts every subpage shares with the main page: fonts, the Lorz header and the Lorz footer
+HEAD_ASSETS = """<link rel="preload" href="assets/fonts/Brandson.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/Advercase-Regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/sub.css">
+<script>/* skeleton only while the fonts are still on their way (first visit); nothing else animates in */
+(function(d){if(!d.fonts||d.fonts.check('1em "Brandson"'))return;var h=d.documentElement;h.classList.add('sk');
+var done=function(){h.classList.remove('sk');};Promise.all(['1em "Brandson"','1em "Advercase"','700 1em "Alte Haas Grotesk"','1em "Alte Haas Grotesk"'].map(function(f){return d.fonts.load(f);})).then(done,done);setTimeout(done,2500);})(document);</script>
+"""
+NAV = [('Sites', 'index.html#sites'), ('Soluções', 'index.html#solucoes'), ('Projetos', 'index.html#projetos'),
+       ('Sob medida', 'index.html#sob-medida'), ('Como funciona', 'index.html#processo')]
+def header(cta, current=None):
+    cur = ' aria-current="true"'
+    items = ''.join(f'<li><a href="{h}"{cur if t == current else ""}>{t}</a></li>' for t, h in NAV)
+    return f"""<header class="top"><div class="wrap nav">
+  <a class="logo" href="index.html" aria-label="Lorz, página inicial"></a>
+  <nav aria-label="Principal"><ul>{items}</ul></nav>
+  <a class="btn sm" href="{cta}">Solicitar <span class="long">proposta</span></a>
+</div></header>"""
+FOOTER = '<footer class="site"><div class="wrap"><span class="logo" aria-hidden="true"></span><span>© 2026 Lorz Marketing · Sites e soluções sob medida</span><a href="index.html">Voltar ao início</a></div></footer>'
+
 PAGES = [
   dict(
     slug='landing-page', idx=0, color='var(--action)', name='Landing Page', service='Criação de sites',
@@ -137,22 +158,10 @@ def page(P):
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>{e(P["name"])} · Lorz</title>
 <meta name="description" content="{e(P["lede"])}">
-<link rel="preload" href="assets/fonts/Brandson.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="assets/fonts/Advercase-Regular.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/sub.css">
-<script>/* skeleton only while the fonts are still on their way (first visit); nothing else animates in */
-(function(d){{if(!d.fonts||d.fonts.check('1em "Brandson"'))return;var h=d.documentElement;h.classList.add('sk');
-var done=function(){{h.classList.remove('sk');}};Promise.all(['1em "Brandson"','1em "Advercase"','700 1em "Alte Haas Grotesk"','1em "Alte Haas Grotesk"'].map(function(f){{return d.fonts.load(f);}})).then(done,done);setTimeout(done,2500);}})(document);</script>
-</head>
+{HEAD_ASSETS}</head>
 <body style="--fc:{P["color"]}">
 {SPRITE}<a class="skip" href="#conteudo">Pular para o conteúdo</a>
-<header class="top"><div class="wrap nav">
-  <a class="logo" href="index.html" aria-label="Lorz, página inicial"></a>
-  <nav aria-label="Principal"><ul>
-    <li><a href="index.html#sites">Formatos</a></li><li><a href="index.html#solucoes">Soluções</a></li><li><a href="index.html#processo">Como funciona</a></li>
-  </ul></nav>
-  <a class="btn sm" href="index.html?formato={P["slug"]}#contato">Solicitar <span class="long">proposta</span></a>
-</div></header>
+{header('index.html?formato=' + P['slug'] + '#contato')}
 
 <main id="conteudo">
 <section class="hero"><div class="wrap hero-grid">
@@ -211,7 +220,7 @@ var done=function(){{h.classList.remove('sk');}};Promise.all(['1em "Brandson"','
 </div></section>
 </main>
 
-<footer class="site"><div class="wrap"><span class="logo" aria-hidden="true"></span><span>© 2026 Lorz Marketing · Sites e soluções sob medida</span><a href="index.html">Voltar ao início</a></div></footer>
+{FOOTER}
 </body>
 </html>
 '''
@@ -397,7 +406,8 @@ def build():
     shutil.copy(SRC / 'brand' / 'lorz-logo.svg', assets / 'brand' / 'lorz-logo.svg')
     (assets / 'sub.css').write_text(CSS)
     for P in PAGES: (OUT / f'{P["slug"]}.html').write_text(page(P))
-    return [P['slug'] for P in PAGES]
+    import projetos_pages; done = projetos_pages.build()
+    return [P['slug'] for P in PAGES] + done
 
 if __name__ == '__main__':
     print('ok', build())

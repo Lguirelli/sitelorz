@@ -456,7 +456,7 @@ footer.site .logo{width:76px;background:var(--muted)}
   cursor:pointer;will-change:transform;pointer-events:auto;
   transform:translateX(calc(var(--x,0) * var(--pw,300px))) translateZ(var(--z,0px)) rotateY(var(--ry,0deg)) scale(var(--s,1));
   transition:transform var(--pj-travel) var(--pj-move),opacity 300ms ease}
-.pj-card.on{cursor:default}
+.pj-card.on{cursor:pointer}
 /* 2) the lift: hover and keyboard focus raise this inner layer, so they never fight the travel above */
 .pj-lift{position:relative;width:100%;height:100%;border-radius:18px;overflow:hidden;background:var(--navy-900);box-shadow:0 0 0 1px var(--line);
   transition:transform var(--pj-hover) var(--pj-out),box-shadow var(--pj-hover) ease}
@@ -483,6 +483,7 @@ footer.site .logo{width:76px;background:var(--muted)}
 @media (hover:hover) and (pointer:fine){
   .pj-stage:not(.grabbing) .pj-card:hover .pj-lift{transform:translateY(-8px) scale(1.02);box-shadow:0 0 0 1px var(--line-strong)}
   .pj-stage:not(.grabbing) .pj-card:hover::after{opacity:1}
+  .pj-stage:not(.grabbing):has(.pj-card.on:hover) .pj-caption{transform:translateY(-8px)}
   .pj-stage:not(.grabbing) .pj-card:hover img{transform:scale(1.045)}
   .pj-stage:not(.grabbing) .pj-card.side:hover .pj-peek{opacity:1;transition-duration:180ms}
   .pj-stage:not(.grabbing) .pj-card.side:hover .pj-peek > *{opacity:1;transform:none;transition-duration:220ms}
@@ -494,11 +495,14 @@ footer.site .logo{width:76px;background:var(--muted)}
 /* keyboard: the same lift on the active card, with a visible ring, while the carousel has focus */
 .pj-stage:focus-visible .pj-card.on .pj-lift{transform:translateY(-8px) scale(1.02);outline:2px solid var(--accent);outline-offset:4px}
 .pj-stage:focus-visible .pj-card.on::after{opacity:1}
+.pj-stage:focus-visible .pj-caption{transform:translateY(-8px)}
 .pj-stage:focus-visible .pj-card.on img{transform:scale(1.045)}
 .pj-stage:focus-visible .pj-card:not(.on) .pj-dim{opacity:.22}
 
 /* the caption of the active project: the old one leaves fast, the new one arrives just behind the panels, line by line */
-.pj-caption{position:absolute;z-index:30;left:calc(50% - var(--pw,300px) / 2 + 28px);top:calc(var(--sth) * .5 + var(--ph,480px) * .14);width:calc(var(--pw,300px) * 1.1);display:grid;pointer-events:none}
+/* anchored to the bottom of the centre card (translate), so a two-line name never runs past its edge; the hover lift uses transform */
+.pj-caption{position:absolute;z-index:30;left:calc(50% - var(--pw,300px) / 2 + 24px);top:calc(var(--sth) * .5 + var(--ph,480px) / 2 - 26px);translate:0 -100%;width:calc(var(--pw,300px) * 1.45);display:grid;pointer-events:none;
+  transition:transform var(--pj-hover) var(--pj-out)}
 .pj-cap{grid-area:1/1;align-self:start}
 .pj-cap a{pointer-events:auto}
 .pj-cap > *{transition:opacity 240ms ease-out,transform 240ms var(--pj-out)}
@@ -509,8 +513,9 @@ footer.site .logo{width:76px;background:var(--muted)}
 .pj-meta{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;margin-bottom:12px}
 .pj-cat{font:700 12px/1.3 var(--font-heading);letter-spacing:.14em;text-transform:uppercase;color:var(--orange-300);text-shadow:0 1px 10px rgba(0,0,0,.6)}
 .pj-flag{padding:6px 10px;border-radius:99px;background:rgba(6,8,19,.72);box-shadow:inset 0 0 0 1px var(--line-strong);font:700 10px/1 var(--font-heading);letter-spacing:.12em;text-transform:uppercase;color:var(--cream-50)}
-.pj-name{font:400 clamp(30px,3.4vw,52px)/.92 var(--font-display);letter-spacing:.01em;text-transform:uppercase;color:var(--cream-50);text-shadow:0 2px 28px rgba(0,0,0,.6);text-wrap:balance}
-.pj-rule{display:block;width:44px;height:2px;margin:16px 0 14px;background:var(--accent)}
+.pj-name{font:400 clamp(34px,3.7vw,58px)/.92 var(--font-display);letter-spacing:.01em;text-transform:uppercase;color:var(--cream-50);text-shadow:0 2px 28px rgba(0,0,0,.6);text-wrap:balance}
+.pj-rule{display:block;width:44px;height:2px;margin:16px 0 12px;background:var(--accent)}
+.pj-stack{font:400 15px/1.4 var(--font-body);color:var(--cream-200);text-shadow:0 1px 12px rgba(0,0,0,.7)}
 /* the explanation, below the carousel: context on the left, what each feature does on the right */
 .pj-detail{position:relative;display:grid;width:min(100% - 64px,1080px);margin:calc(var(--sth) + 8px) auto 0;-webkit-user-select:text;user-select:text}
 .pj-detail .pj-cap{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:18px 56px;align-items:start;padding-top:26px;border-top:1px solid var(--line)}
@@ -518,7 +523,8 @@ footer.site .logo{width:76px;background:var(--muted)}
 .pj-feats{list-style:none;display:grid;gap:10px}
 .pj-feats li{position:relative;padding-left:18px;font:400 17px/1.45 var(--font-body);color:var(--cream-200);text-wrap:pretty}
 .pj-feats li::before{content:"";position:absolute;left:0;top:.62em;width:6px;height:6px;border-radius:50%;background:var(--accent)}
-.pj-open{grid-column:2;justify-self:start}
+.pj-links{grid-column:2;display:flex;flex-wrap:wrap;align-items:center;gap:12px 22px;margin-top:6px}
+.pj-site{font:700 13px/1 var(--font-heading);letter-spacing:.1em;text-transform:uppercase;color:var(--cream-50);text-underline-offset:5px}
 .pj .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 .pj-ctrl{display:contents}
 /* arrows: the header's round buttons, at the sides */
@@ -536,18 +542,19 @@ footer.site .logo{width:76px;background:var(--muted)}
 .pj-probe{position:absolute!important;left:0;right:0;visibility:hidden;pointer-events:none}
 /* small screens: one neighbour peeks on each side; the text and the controls sit below the panel, always visible */
 @media (max-width:899px){
-  .pj-stage{height:auto;padding-bottom:4px}
+  .pj-stage{height:auto;padding-bottom:4px;display:flex;flex-direction:column}
+  .pj-ctrl{order:1}.pj-detail{order:2;margin-top:28px!important}
   .pj-track{position:relative;top:auto;height:calc(var(--ph,420px) + 48px)}
   .pj-card{top:50%}
   .pj-lift,.pj-card::before,.pj-card::after{border-radius:16px}
   .pj-lift::before,.pj-peek{display:none}
-  .pj-caption{position:relative;left:auto;top:auto;width:min(100% - 32px,560px);margin:14px auto 0}
+  .pj-caption{position:relative;left:auto;top:auto;translate:none;width:min(100% - 32px,560px);margin:14px auto 0}
   .pj-name{font-size:clamp(38px,11vw,56px)}
   .pj-detail{width:min(100% - 32px,560px);margin:12px auto 0}
   .pj-detail .pj-cap{grid-template-columns:minmax(0,1fr);gap:14px;padding-top:0;border-top:0}
   .pj-desc{font-size:18px}
   .pj-feats li{font-size:16px}
-  .pj-open{grid-column:auto}
+  .pj-links{grid-column:auto}
   .pj-ctrl{display:flex;align-items:center;justify-content:space-between;gap:16px;width:min(100% - 32px,560px);margin:22px auto 0}
   .pj-arrow,.pj-count{position:static;margin:0;translate:none}
   .pj-arrow{background:var(--surface-hover)}
@@ -560,6 +567,7 @@ footer.site .logo{width:76px;background:var(--muted)}
   .pj-peek > *,.pj-cap > *{transform:none!important;transition:opacity 200ms ease!important;transition-delay:0ms!important}
   @starting-style{.pj-cap.in > *{transform:none}}
   .pj-bgimg{transition:opacity 200ms ease}
+  .pj-caption{transform:none!important;transition:none}
 }
 
 /* ---------- responsive ---------- */
@@ -2648,42 +2656,48 @@ $('#copy').addEventListener('click', () => {
 });
 
 /* ========== 6) principais projetos: carrossel em perspectiva ========== */
-/* Os projetos ficam todos aqui. Para incluir, remover ou mudar a ordem, edite esta lista.
+/* Os projetos ficam todos aqui. Para incluir, remover ou mudar a ordem, edite esta lista
+   (o conteúdo das páginas de cada projeto fica em src/projetos_pages.py).
    name, category  nome e tipo de solução
-   description     uma frase de contexto: o que é o site e para quem
-   features        o que cada funcionalidade faz (uma frase por item; até três cabem bem)
+   tagline         o que o site resolve, numa linha curta (aparece sob o nome)
+   description     o que é o site e para quem, em linguagem de cliente
+   features        o que o site faz por quem visita (uma frase por item; até três cabem bem)
+   page            a página do projeto, com o site funcionando e a explicação completa
    image           retrato 680×1100 em assets/projetos/ (as capturas do projeto compostas sobre uma cor da Lorz)
    bg              versão pequena da captura, usada desfocada no fundo da seção
    alt             o que a imagem mostra, para leitores de tela
    status          'real' (trabalho para um negócio real), 'conceitual' (estudo sem cliente) ou 'demonstrativo' (exemplo fictício)
-   url             destino do botão "Abrir projeto"; sem url, o botão não aparece */
+   url             endereço publicado (opcional); sem url, só a página do projeto aparece */
 const PROJECTS = [
   { name: 'Flat Jardim Serrano', category: 'Site completo · Hospedagem', status: 'real', url: null,
+    tagline: 'Reservas pelo WhatsApp, com a mensagem pronta', page: 'projeto-flat-jardim-serrano.html',
     image: 'assets/projetos/flat.jpg', bg: 'assets/projetos/flat-fundo.jpg',
     alt: 'Site do Flat Jardim Serrano no computador e no celular, com o seletor de flats em destaque',
-    description: 'Site dos sete flats privativos para casais do Flat Jardim Serrano, em Serra Negra (SP).',
+    description: 'Site de uma hospedagem com sete flats para casais. Ajuda o hóspede a escolher e envia o pedido de reserva pronto para o WhatsApp.',
     features: [
-      'Seletor de flats: você marca o que não pode faltar e vê só as unidades que têm tudo.',
-      'Consultar datas: o formulário conta as noites e abre o WhatsApp com a mensagem pronta.',
-      'Uma página por flat, com fotos, comodidades e regras, no tema claro ou escuro.',
+      'O hóspede marca o que não pode faltar e vê só os flats que têm tudo.',
+      'Escolhe as datas, e o site abre o WhatsApp com a mensagem escrita e as noites contadas.',
+      'Cada flat tem sua página, com fotos, o que está incluso e as regras da casa.',
     ] },
   { name: 'Brasa', category: 'Site e pedido online · Hamburgueria', status: 'conceitual', url: null,
+    tagline: 'Pedido online, da sacola ao Pix', page: 'projeto-brasa.html',
     image: 'assets/projetos/brasa.jpg', bg: 'assets/projetos/brasa-fundo.jpg',
     alt: 'Site da Brasa com o hambúrguer em 3D separado em camadas, a sacola no celular e o pagamento por Pix',
-    description: 'Site de hamburgueria com cardápio, história da casa e pedido online, hoje em modo de demonstração.',
+    description: 'Site de hamburgueria com cardápio e pedido online: o cliente monta o pedido e paga sem sair do site. Projeto conceitual, em versão de teste.',
     features: [
-      'Hambúrguer em 3D: arraste para girar; ao rolar a página, as camadas se separam.',
-      'Pedido em quatro passos: sacola, entrega ou retirada, pagamento e revisão.',
-      'Pix com código copia e cola, cartão na maquininha ou dinheiro com troco.',
+      'Na abertura, o hambúrguer em 3D gira com o dedo e se desmonta ao descer a página.',
+      'A sacola fica guardada, mesmo se o cliente fechar a página sem querer.',
+      'Entrega ou retirada, e pagamento por Pix, cartão na entrega ou dinheiro com troco.',
     ] },
   { name: 'Isadora Guirelli', category: 'Landing page · Saúde capilar', status: 'real', url: null,
+    tagline: 'Orienta antes do primeiro contato', page: 'projeto-isadora-guirelli.html',
     image: 'assets/projetos/isa.jpg', bg: 'assets/projetos/isa-fundo.jpg',
     alt: 'Site de Isadora Guirelli no computador e no celular, com os caminhos Sinais de atenção e Cuidados',
-    description: 'Site de tricologia para quem percebeu queda ou afinamento dos fios e quer entender os próximos passos.',
+    description: 'Site de uma especialista em saúde capilar. Explica os sinais de queda e afinamento dos fios e leva a pessoa até o WhatsApp.',
     features: [
-      'Quatro caminhos logo no início: sinais, cuidados, como funciona e contato.',
-      'Páginas que explicam o que observar nos fios e quando procurar um dermatologista.',
-      'Atalho do WhatsApp no celular, que some quando outro contato já está na tela.',
+      'Quatro atalhos logo no início levam cada pessoa ao que ela procura.',
+      'Páginas curtas explicam o que observar e quando procurar um dermatologista.',
+      'No celular, o botão de WhatsApp acompanha a leitura sem cobrir o texto.',
     ] },
 ];
 const STATUS = { demonstrativo: 'Projeto demonstrativo', conceitual: 'Projeto conceitual', real: '', publicado: '' };
@@ -2691,16 +2705,18 @@ const STATUS = { demonstrativo: 'Projeto demonstrativo', conceitual: 'Projeto co
 function capNode(p, i, n, part){
   const flag = STATUS[p.status] || '', c = document.createElement('div'); c.className = 'pj-cap';
   if (part === 'head'){
-    c.innerHTML = `<p class="pj-meta"><span class="pj-cat"></span>${flag ? '<span class="pj-flag"></span>' : ''}</p>
-      <h3 class="pj-name"></h3><i class="pj-rule" aria-hidden="true"></i><span class="sr">Projeto ${i + 1} de ${n}.</span>`;
-    c.querySelector('.pj-cat').textContent = p.category; c.querySelector('.pj-name').textContent = p.name;
+    c.innerHTML = `${flag ? '<p class="pj-meta"><span class="pj-flag"></span></p>' : ''}
+      <h3 class="pj-name"></h3><i class="pj-rule" aria-hidden="true"></i><p class="pj-stack"></p><span class="sr">${p.category}. Projeto ${i + 1} de ${n}.</span>`;
+    c.querySelector('.pj-name').textContent = p.name;
+    c.querySelector('.pj-stack').textContent = p.tagline || '';
     if (flag) c.querySelector('.pj-flag').textContent = flag;
   } else {
-    c.innerHTML = `<p class="pj-desc"></p>${(p.features || []).length ? '<ul class="pj-feats" aria-label="Funcionalidades"></ul>' : ''}
-      ${p.url ? '<a class="pj-open btn" target="_blank" rel="noopener">Abrir projeto<span class="sr"> (abre em nova aba)</span></a>' : ''}`;
+    c.innerHTML = `<p class="pj-desc"></p>${(p.features || []).length ? '<ul class="pj-feats" aria-label="O que o site faz"></ul>' : ''}
+      <p class="pj-links">${p.page ? '<a class="pj-open btn"></a>' : ''}${p.url ? '<a class="pj-site" target="_blank" rel="noopener">Abrir o site<span class="sr"> (abre em nova aba)</span></a>' : ''}</p>`;
     c.querySelector('.pj-desc').textContent = p.description;
     (p.features || []).forEach(f => { const li = document.createElement('li'); li.textContent = f; c.querySelector('.pj-feats').appendChild(li); });
-    if (p.url) c.querySelector('.pj-open').href = p.url;
+    if (p.page){ const a = c.querySelector('.pj-open'); a.href = p.page; a.textContent = 'Ver e testar o projeto'; }
+    if (p.url) c.querySelector('.pj-site').href = p.url;
   }
   [...c.children].forEach((k, m) => k.style.setProperty('--i', m));
   return c;
@@ -2719,14 +2735,15 @@ function capNode(p, i, n, part){
   for (let j = 0; j < N; j++){
     const p = PROJECTS[j % n], el = document.createElement('div');
     el.className = 'pj-card'; el.dataset.j = j;
-    el.innerHTML = `<div class="pj-lift"><img src="${p.image}" alt="" width="680" height="1100" decoding="async" ${j < n ? '' : 'loading="lazy"'} draggable="false"><span class="pj-dim"></span><span class="pj-peek" aria-hidden="true"><span class="pj-peek-cat"></span><b class="pj-peek-name"></b></span></div>`;
-    el.querySelector('.pj-peek-cat').textContent = p.category; el.querySelector('.pj-peek-name').textContent = p.name;
+    el.innerHTML = `<div class="pj-lift"><img src="${p.image}" alt="" width="680" height="1100" decoding="async" ${j < n ? '' : 'loading="lazy"'} draggable="false"><span class="pj-dim"></span><span class="pj-peek" aria-hidden="true"><b class="pj-peek-name"></b></span></div>`;
+    el.querySelector('.pj-peek-name').textContent = p.name;
     track.appendChild(el); panels.push({ el, pos: 0 });
   }
   let active = 0, R = 2;   // R: how many neighbours show on each side
 
-  // where each offset sits: the centre in front, neighbours turned toward it, the far ones smaller and behind
-  const X = [0, .84, 1.52, 2.1], S = [1, .86, .72, .6], Y = [0, 24, 30, 34], Z = [0, -70, -150, -230], SH = [0, .4, .62, .85];
+  // where each offset sits (as in the reference): the centre in front; the neighbours almost touching it and turned
+  // toward it, so the edge facing the centre is the taller one; the far ones smaller, further back and darker
+  const X = [0, .9, 1.6, 2.15], S = [1, .84, .68, .56], Y = [0, 20, 26, 30], Z = [0, -60, -150, -240], SH = [0, .34, .58, .85];
   const XM = [0, 1.02, 1.9], SM = [1, .88, .76], YM = [0, 10, 14];
   function place(pnl, pos){
     const a = Math.abs(pos), s = Math.sign(pos), mob = R === 1, k = Math.min(a, mob ? 2 : 3);
@@ -2734,7 +2751,7 @@ function capNode(p, i, n, part){
     const st = pnl.el.style;
     st.setProperty('--x', (s * x).toFixed(3));
     st.setProperty('--s', (mob ? SM : S)[k]);
-    st.setProperty('--ry', (-s * (mob ? YM : Y)[k]) + 'deg');
+    st.setProperty('--ry', (s * (mob ? YM : Y)[k]) + 'deg');
     st.setProperty('--z', (mob ? 0 : Z[k]) + 'px');
     st.setProperty('--sh', a === 0 ? 0 : SH[Math.min(a, 3)]);
     st.zIndex = 20 - a;
@@ -2790,10 +2807,12 @@ function capNode(p, i, n, part){
 
   $('.pj-arrow.prev', sec).addEventListener('click', () => go(-1));
   $('.pj-arrow.next', sec).addEventListener('click', () => go(1));
-  // a click on a side panel brings it to the centre (it never opens the project)
+  // a click on a side panel brings it to the centre; a click on the centre one opens the project's page
+  // (the keyboard and screen readers reach the same page through the link below the carousel)
   track.addEventListener('click', (e) => {
     if (dragged) return;
-    const card = e.target.closest('.pj-card'); if (!card || card.classList.contains('on')) return;
+    const card = e.target.closest('.pj-card'); if (!card) return;
+    if (card.classList.contains('on')){ const p = PROJECTS[active % n]; if (p.page) location.href = p.page; return; }
     go(shortest(+card.dataset.j));
   });
   stage.addEventListener('keydown', (e) => {
@@ -2854,10 +2873,14 @@ function capNode(p, i, n, part){
   // sizes follow the stage; on small screens one neighbour peeks on each side and the text sits below
   function measure(){
     const W = stage.clientWidth, mob = matchMedia('(max-width: 899px)').matches;
-    R = mob ? 1 : Math.min(2, Math.floor((n - 1) / 2));   // with few projects, no copy shows twice on screen
-    let ph;
+    R = mob ? 1 : 2;   // five panels on wide screens, as in the reference (with three projects, two of them repeat at the ends)
+    let ph; stage.style.removeProperty('--sth');
     if (mob){ pw = Math.min(W * .74, 360); ph = pw * 1.18; }
-    else { const H = track.clientHeight; ph = H * .8; pw = Math.min(ph * 680 / 1100, W * .25); ph = pw * 1100 / 680; }
+    else {
+      // the panel is sized by the viewport height and the stage width; the stage then hugs it, so no empty band is left
+      const H = track.clientHeight; ph = H * .8; pw = Math.min(ph * 680 / 1100, W * .19); ph = pw * 1100 / 680;
+      stage.style.setProperty('--sth', Math.round(ph + 110) + 'px');
+    }
     stage.style.setProperty('--pw', pw.toFixed(1) + 'px'); stage.style.setProperty('--ph', ph.toFixed(1) + 'px');
     // the caption box keeps the height of the tallest project, so changing project never moves the page
     // (the head only needs it on small screens, where it sits in the flow; the explanation always does)
