@@ -97,7 +97,7 @@ h3,.h3{font:700 21px/1.25 var(--font-heading);letter-spacing:-.01em}
 .band-inverse .display em{color:var(--accent)}
 
 /* ---------- cursor flock ---------- */
-#crew{position:absolute;left:0;top:0;width:100%;height:100vh;pointer-events:none;z-index:60;overflow:hidden}
+#crew{position:absolute;left:0;top:0;width:100%;height:0;pointer-events:none;z-index:60;overflow:hidden}
 #crewFix{position:fixed;inset:0;pointer-events:none;z-index:61;overflow:hidden}
 #crew[hidden]+#crewFix{display:none}
 .wk{position:absolute;left:0;top:0;will-change:transform;transition:opacity .2s ease}
@@ -130,7 +130,8 @@ h3,.h3{font:700 21px/1.25 var(--font-heading);letter-spacing:-.01em}
 .wk-sel b{position:absolute;right:-1.5px;bottom:-20px;font:400 10px/1 var(--font-heading);background:var(--navy-900);color:var(--orange-300);padding:4px 6px;white-space:nowrap;font-variant-numeric:tabular-nums}
 
 /* ---------- intro ---------- */
-#intro{position:fixed;inset:0;background:var(--bg);z-index:50;display:grid;place-items:center;transition:opacity .6s ease}
+#intro{position:fixed;inset:0;background:var(--bg);z-index:50;display:none;place-items:center;transition:opacity .6s ease}
+.js #intro{display:grid}
 #intro .mark{width:64px;height:64px;filter:grayscale(1) opacity(.2);transition:filter .5s, transform .6s var(--ease)}
 #intro .mark.lit{filter:none;transform:scale(1.1)}
 #intro .bar{position:absolute;bottom:max(40px,env(safe-area-inset-bottom,0px));left:50%;width:160px;height:2px;background:var(--line);transform:translateX(-50%);overflow:hidden}
@@ -148,13 +149,13 @@ h3,.h3{font:700 21px/1.25 var(--font-heading);letter-spacing:-.01em}
 .guide.h{height:1px;left:0;right:0;transform:scaleX(0);transform-origin:left}
 .guide.v{width:1px;top:0;bottom:0;transform:scaleY(0);transform-origin:top}
 .guide.on{transform:none}
-.build{opacity:0}
-.build.built{opacity:1;animation:buildIn .45s ease}
-.build.built.now{animation:none}
+.js .build{opacity:0}
+.js .build.built{opacity:1;animation:buildIn .45s ease}
+.js .build.built.now{animation:none}
 @keyframes buildIn{from{opacity:0}}
-.media.build::after{content:"";position:absolute;inset:0;z-index:4;pointer-events:none;border-radius:inherit;
+.js .media.build::after{content:"";position:absolute;inset:0;z-index:4;pointer-events:none;border-radius:inherit;
   background:repeating-linear-gradient(45deg,var(--ph1) 0 10px,var(--ph2) 10px 20px);opacity:1;transition:opacity .35s ease .05s}
-.media.build.built::after{opacity:0}
+.js .media.build.built::after{opacity:0}
 .media.no-ph::after{display:none}
 .ed-layer{position:absolute;inset:0;pointer-events:none;z-index:6;opacity:0;transition:opacity .6s ease;overflow:hidden}
 .ed-layer.active{opacity:1}
@@ -197,6 +198,8 @@ header.open .menu-btn i:last-child{top:20px;transform:rotate(-45deg)}
 .hero-grid{position:relative;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:32px;align-items:center;min-height:min(720px,calc(100svh - 72px))}
 .hero-copy{position:relative;z-index:3;display:grid;gap:26px;justify-items:start}
 .hero h1{font-size:clamp(56px,8.6vw,132px)}
+/* one column (tablet and phone): the title fits two lines of the column, so "feito sob medida." stays together */
+@media (max-width:960px){.hero-copy{container-type:inline-size}.hero h1{font-size:min(clamp(56px,8.6vw,132px),14.4cqi)}}
 .proof{display:flex;flex-wrap:wrap;gap:10px}
 .ctas{display:flex;gap:14px;flex-wrap:wrap}
 .hero-art{position:relative;align-self:stretch;min-height:440px}
@@ -244,6 +247,17 @@ section{position:relative}
 .blk{border-radius:4px;background:var(--surface-hover)}
 .blk.ink{background:var(--line-strong)}.blk.red{background:var(--action)}.blk.orange{background:var(--accent)}
 .format:hover .pg{transform:translateY(-30%)}
+/* the button at the bottom says where the card goes; the whole card is its click area */
+.card-link{display:flex;align-items:center;justify-content:center;gap:10px;min-height:48px;margin-top:2px;padding:12px 20px;border-radius:99px;
+  background:var(--ic);color:var(--on-ic,var(--on-action));font:700 13px/1 var(--font-heading);letter-spacing:.06em;text-transform:uppercase;text-decoration:none;transition:background .2s}
+.card-link::after{content:"→";transition:translate .3s var(--ease)}
+.card-link::before{content:"";position:absolute;inset:0;z-index:5;border-radius:18px}
+.format:hover{border-color:var(--line-strong);background:var(--surface-hover)}
+/* no filter or transform here: either would shrink the card's click area to the button */
+.format:hover .card-link{background:color-mix(in srgb,var(--ic) 82%,var(--cream-50))}
+.format:hover .card-link::after{translate:4px 0}
+.card-link:focus-visible{outline:none}
+.format:has(.card-link:focus-visible){outline:2px solid var(--accent);outline-offset:3px}
 .pg-dash{grid-template-rows:auto 1fr auto;height:calc(100% - 22px);bottom:0}
 .format:hover .pg-dash{transform:none}
 .pg-dash .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
@@ -415,6 +429,134 @@ footer.site{border-top:1px solid var(--line);padding-block:32px}
 footer.site .wrap{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;font:400 14px/1.4 var(--font-heading);color:var(--muted)}
 footer.site .logo{width:76px;background:var(--muted)}
 
+/* ---------- principais projetos (isolado em .pj) ---------- */
+/* a dark stage in any theme: the project's capture, blown up and dimmed, sits behind the panels */
+.pj{position:relative;overflow:hidden;overflow:clip;isolation:isolate;background:var(--navy-950);color:var(--cream-200);
+  --ink:var(--cream-200);--muted:var(--cream-400);--line:rgba(250,228,207,.12);--line-strong:rgba(250,228,207,.28);--surface-hover:rgba(250,228,207,.07);
+  /* motion: panels travel with a strong ease-in-out; hover and arrivals use a strong ease-out (Emil Kowalski's curves) */
+  --pj-move:cubic-bezier(.77,0,.175,1);--pj-out:cubic-bezier(.23,1,.32,1);--pj-travel:520ms;--pj-hover:200ms}
+.pj .sec-head{grid-template-columns:minmax(0,1fr);margin-bottom:8px}
+.pj .sec-head p{max-width:58ch}
+.pj-bg{position:absolute;inset:0;z-index:-1;pointer-events:none;-webkit-mask:linear-gradient(transparent,#000 18%,#000 82%,transparent);mask:linear-gradient(transparent,#000 18%,#000 82%,transparent)}
+.pj-bg::after{content:"";position:absolute;inset:0;background:radial-gradient(70% 60% at 50% 58%,rgba(6,8,19,.3),rgba(6,8,19,.86))}
+.pj-bgimg{position:absolute;inset:-8%;width:116%;height:116%;object-fit:cover;filter:blur(30px) saturate(1.1) brightness(.5);opacity:0;transition:opacity 450ms ease}
+.pj-bgimg.on{opacity:1}
+.pj-stage{--sth:clamp(540px,72vh,720px);position:relative;display:flow-root;perspective:1500px;touch-action:pan-y;-webkit-user-select:none;user-select:none;outline:none}
+.pj-stage.grabbing,.pj-stage.grabbing *{cursor:grabbing!important}
+.pj-track{position:absolute;left:0;right:0;top:0;height:var(--sth);transform-style:preserve-3d;pointer-events:none;transition:translate 420ms var(--pj-out)}
+.pj-track.drag{transition:none}
+
+/* 1) the card: where it sits in the carousel (moves only when the project changes) */
+.pj-card{position:absolute;left:50%;top:calc(var(--sth) * .5);width:var(--pw,300px);height:var(--ph,480px);margin:calc(var(--ph,480px) / -2) 0 0 calc(var(--pw,300px) / -2);
+  cursor:pointer;will-change:transform;pointer-events:auto;
+  transform:translateX(calc(var(--x,0) * var(--pw,300px))) translateZ(var(--z,0px)) rotateY(var(--ry,0deg)) scale(var(--s,1));
+  transition:transform var(--pj-travel) var(--pj-move),opacity 300ms ease}
+.pj-card.on{cursor:default}
+/* 2) the lift: hover and keyboard focus raise this inner layer, so they never fight the travel above */
+.pj-lift{position:relative;width:100%;height:100%;border-radius:18px;overflow:hidden;background:var(--navy-900);box-shadow:0 0 0 1px var(--line);
+  transition:transform var(--pj-hover) var(--pj-out),box-shadow var(--pj-hover) ease}
+/* the deeper shadow is its own layer and only fades, so the lift stays on transform and opacity */
+.pj-card::before{content:"";position:absolute;inset:0;border-radius:18px;box-shadow:0 40px 80px -30px rgba(0,0,0,.75);pointer-events:none}
+.pj-card::after{content:"";position:absolute;inset:0;border-radius:18px;box-shadow:0 56px 90px -34px rgba(0,0,0,.9),0 0 46px -12px color-mix(in srgb,var(--accent) 35%,transparent);opacity:0;transition:opacity var(--pj-hover) ease;pointer-events:none}
+/* 3) the image: a slow, slight zoom that follows the lift, clipped by the card */
+.pj-lift img{display:block;width:100%;height:100%;object-fit:cover;object-position:top;pointer-events:none;transition:transform 280ms var(--pj-out)}
+/* depth shade of the side panels, the reading gradient of the active one, and the dim used when another card is hovered */
+.pj-lift::after{content:"";position:absolute;inset:0;background:var(--navy-950);opacity:var(--sh,0);transition:opacity var(--pj-travel) var(--pj-move);pointer-events:none}
+.pj-lift::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(rgba(6,8,19,0) 30%,rgba(6,8,19,.9) 52%,rgba(6,8,19,.97) 70%);opacity:0;transition:opacity 400ms ease;pointer-events:none}
+.pj-card.on .pj-lift::before{opacity:1}
+.pj-card.side .pj-lift::before{opacity:.55}
+.pj-dim{position:absolute;inset:0;z-index:2;background:var(--navy-950);opacity:0;transition:opacity var(--pj-hover) ease;pointer-events:none}
+/* side panels: name and type rise in on hover (category first, then the name) */
+.pj-peek{position:absolute;left:16px;bottom:16px;z-index:3;display:grid;justify-items:start;gap:6px;max-width:calc(100% - 32px);padding:12px 14px;border-radius:12px;pointer-events:none;
+  background:rgba(6,8,19,.78);box-shadow:inset 0 0 0 1px var(--line-strong);opacity:0;transition:opacity 120ms ease}
+/* right of the centre the label goes to the top, clear of the active project's text */
+.pj-card.right .pj-peek{left:auto;right:16px;bottom:auto;top:16px;justify-items:end;text-align:right}
+.pj-peek > *{opacity:0;transform:translateY(8px);transition:opacity 120ms ease,transform 120ms var(--pj-out)}
+.pj-peek-cat{font:700 11px/1.3 var(--font-heading);letter-spacing:.14em;text-transform:uppercase;color:var(--orange-300)}
+.pj-peek-name{font:400 clamp(22px,2vw,30px)/.95 var(--font-display);text-transform:uppercase;color:var(--cream-50);text-shadow:0 2px 18px rgba(0,0,0,.7)}
+.pj-card.on .pj-peek{display:none}
+@media (hover:hover) and (pointer:fine){
+  .pj-stage:not(.grabbing) .pj-card:hover .pj-lift{transform:translateY(-8px) scale(1.02);box-shadow:0 0 0 1px var(--line-strong)}
+  .pj-stage:not(.grabbing) .pj-card:hover::after{opacity:1}
+  .pj-stage:not(.grabbing) .pj-card:hover img{transform:scale(1.045)}
+  .pj-stage:not(.grabbing) .pj-card.side:hover .pj-peek{opacity:1;transition-duration:180ms}
+  .pj-stage:not(.grabbing) .pj-card.side:hover .pj-peek > *{opacity:1;transform:none;transition-duration:220ms}
+  .pj-stage:not(.grabbing) .pj-card.side:hover .pj-peek-name{transition-delay:40ms}
+  /* the others step back a little; the caption of the active project is a separate layer and stays bright */
+  .pj-stage:not(.grabbing) .pj-track:has(.pj-card:hover) .pj-card:not(:hover) .pj-dim{opacity:.22}
+}
+.pj-arrow:active,.pj-card.side:active .pj-lift{transform:scale(.97)}
+/* keyboard: the same lift on the active card, with a visible ring, while the carousel has focus */
+.pj-stage:focus-visible .pj-card.on .pj-lift{transform:translateY(-8px) scale(1.02);outline:2px solid var(--accent);outline-offset:4px}
+.pj-stage:focus-visible .pj-card.on::after{opacity:1}
+.pj-stage:focus-visible .pj-card.on img{transform:scale(1.045)}
+.pj-stage:focus-visible .pj-card:not(.on) .pj-dim{opacity:.22}
+
+/* the caption of the active project: the old one leaves fast, the new one arrives just behind the panels, line by line */
+.pj-caption{position:absolute;z-index:30;left:calc(50% - var(--pw,300px) / 2 + 28px);top:calc(var(--sth) * .5 + var(--ph,480px) * .14);width:calc(var(--pw,300px) * 1.1);display:grid;pointer-events:none}
+.pj-cap{grid-area:1/1;align-self:start}
+.pj-cap a{pointer-events:auto}
+.pj-cap > *{transition:opacity 240ms ease-out,transform 240ms var(--pj-out)}
+.pj-cap.in > *{transition-delay:calc(140ms + var(--i,0) * 40ms)}
+@starting-style{.pj-cap.in > *{opacity:0;transform:translateY(14px)}}
+.pj-cap.out > *{opacity:0;transform:translateY(-8px);transition-duration:150ms;transition-delay:0ms}
+.pj-cap.out{pointer-events:none}
+.pj-meta{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;margin-bottom:12px}
+.pj-cat{font:700 12px/1.3 var(--font-heading);letter-spacing:.14em;text-transform:uppercase;color:var(--orange-300);text-shadow:0 1px 10px rgba(0,0,0,.6)}
+.pj-flag{padding:6px 10px;border-radius:99px;background:rgba(6,8,19,.72);box-shadow:inset 0 0 0 1px var(--line-strong);font:700 10px/1 var(--font-heading);letter-spacing:.12em;text-transform:uppercase;color:var(--cream-50)}
+.pj-name{font:400 clamp(30px,3.4vw,52px)/.92 var(--font-display);letter-spacing:.01em;text-transform:uppercase;color:var(--cream-50);text-shadow:0 2px 28px rgba(0,0,0,.6);text-wrap:balance}
+.pj-rule{display:block;width:44px;height:2px;margin:16px 0 14px;background:var(--accent)}
+/* the explanation, below the carousel: context on the left, what each feature does on the right */
+.pj-detail{position:relative;display:grid;width:min(100% - 64px,1080px);margin:calc(var(--sth) + 8px) auto 0;-webkit-user-select:text;user-select:text}
+.pj-detail .pj-cap{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:18px 56px;align-items:start;padding-top:26px;border-top:1px solid var(--line)}
+.pj-desc{font-size:20px;line-height:1.45;color:var(--cream-50);text-wrap:pretty}
+.pj-feats{list-style:none;display:grid;gap:10px}
+.pj-feats li{position:relative;padding-left:18px;font:400 17px/1.45 var(--font-body);color:var(--cream-200);text-wrap:pretty}
+.pj-feats li::before{content:"";position:absolute;left:0;top:.62em;width:6px;height:6px;border-radius:50%;background:var(--accent)}
+.pj-open{grid-column:2;justify-self:start}
+.pj .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.pj-ctrl{display:contents}
+/* arrows: the header's round buttons, at the sides */
+.pj-arrow{position:absolute;top:calc(var(--sth) * .5);z-index:40;width:52px;height:52px;margin-top:-26px;display:grid;place-items:center;border:0;border-radius:50%;cursor:pointer;
+  background:rgba(6,8,19,.4);color:var(--cream-50);box-shadow:inset 0 0 0 1px var(--line);transition:background 200ms ease,transform 160ms var(--pj-out)}
+.pj-arrow:hover{background:color-mix(in srgb,var(--accent) 24%,rgba(6,8,19,.5))}
+.pj-arrow:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.pj-arrow svg{width:20px;height:20px}
+.pj-arrow.prev{left:max(16px,calc(50% - 620px))}
+.pj-arrow.next{right:max(16px,calc(50% - 620px))}
+.pj-count{position:absolute;left:50%;top:calc(var(--sth) - 30px);translate:-50% 0;z-index:40;display:flex;align-items:center;gap:12px;font:700 12px/1 var(--font-heading);letter-spacing:.14em;color:var(--cream-400);font-variant-numeric:tabular-nums}
+.pj-now{color:var(--cream-50)}
+.pj-bar{width:72px;height:2px;background:var(--line-strong);overflow:hidden}
+.pj-bar i{display:block;height:100%;background:var(--accent);transform-origin:left;transform:scaleX(0);transition:transform var(--pj-travel) var(--pj-move)}
+.pj-probe{position:absolute!important;left:0;right:0;visibility:hidden;pointer-events:none}
+/* small screens: one neighbour peeks on each side; the text and the controls sit below the panel, always visible */
+@media (max-width:899px){
+  .pj-stage{height:auto;padding-bottom:4px}
+  .pj-track{position:relative;top:auto;height:calc(var(--ph,420px) + 48px)}
+  .pj-card{top:50%}
+  .pj-lift,.pj-card::before,.pj-card::after{border-radius:16px}
+  .pj-lift::before,.pj-peek{display:none}
+  .pj-caption{position:relative;left:auto;top:auto;width:min(100% - 32px,560px);margin:14px auto 0}
+  .pj-name{font-size:clamp(38px,11vw,56px)}
+  .pj-detail{width:min(100% - 32px,560px);margin:12px auto 0}
+  .pj-detail .pj-cap{grid-template-columns:minmax(0,1fr);gap:14px;padding-top:0;border-top:0}
+  .pj-desc{font-size:18px}
+  .pj-feats li{font-size:16px}
+  .pj-open{grid-column:auto}
+  .pj-ctrl{display:flex;align-items:center;justify-content:space-between;gap:16px;width:min(100% - 32px,560px);margin:22px auto 0}
+  .pj-arrow,.pj-count{position:static;margin:0;translate:none}
+  .pj-arrow{background:var(--surface-hover)}
+}
+/* reduced motion: nothing travels, lifts or zooms; projects and text change with a short fade */
+@media (prefers-reduced-motion:reduce){
+  .pj-card{transition:opacity 200ms ease}
+  .pj-lift,.pj-lift img,.pj-track,.pj-bar i,.pj-lift::after{transition:none}
+  .pj .pj-card:hover .pj-lift,.pj-stage:focus-visible .pj-card.on .pj-lift,.pj .pj-card:hover img,.pj-stage:focus-visible .pj-card.on img,.pj-arrow:active,.pj-card.side:active .pj-lift{transform:none!important}
+  .pj-peek > *,.pj-cap > *{transform:none!important;transition:opacity 200ms ease!important;transition-delay:0ms!important}
+  @starting-style{.pj-cap.in > *{transform:none}}
+  .pj-bgimg{transition:opacity 200ms ease}
+}
+
 /* ---------- responsive ---------- */
 @media (max-width:960px){
   /* the links move into a dropdown under the header */
@@ -466,6 +608,8 @@ footer.site .logo{width:76px;background:var(--muted)}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="i-replay" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 12a8.5 8.5 0 1 0 2.8-6.3L3.5 8.2"/><path d="M3.5 3.5v4.7h4.7"/><path d="M10.2 9.2l4.6 2.8-4.6 2.8z" fill="currentColor"/></symbol><symbol id="i-layout" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 9h18M9 9v11"/></symbol><symbol id="i-cursor" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3l5.6 15 2.1-6.2L19 9.6z"/><path d="M13 13l5 5"/></symbol><symbol id="i-devices" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="14" height="10" rx="2"/><path d="M6 19h6"/><rect x="17.5" y="8" width="4.5" height="11" rx="1.5"/></symbol><symbol id="i-pages" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="3" width="13" height="16" rx="2"/><path d="M4 7v12a2 2 0 0 0 2 2h10M10.5 8h6M10.5 12h6"/></symbol><symbol id="i-compass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></symbol><symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/></symbol><symbol id="i-article" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h10l4 4v12H5z"/><path d="M14 4v5h5M8 13h8M8 17h5"/></symbol><symbol id="i-loop" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 0 1 14-5.3M20 12a8 8 0 0 1-14 5.3"/><path d="M18 3v4h-4M6 21v-4h4"/></symbol><symbol id="i-growth" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16"/><path d="M5 16l5-5 3 3 6-7"/><path d="M15 7h4v4"/></symbol><symbol id="i-inbox" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13l3-8h12l3 8v6H3z"/><path d="M3 13h5l1.5 2.5h5L16 13h5"/></symbol><symbol id="i-send" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 3L10 14"/><path d="M21 3l-7 18-4-7-7-4z"/></symbol><symbol id="i-plug" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 7V3M15 7V3M7 7h10v4a5 5 0 0 1-10 0zM12 16v5"/></symbol><symbol id="i-database" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v12c0 1.7 3.1 3 7 3s7-1.3 7-3V6M5 12c0 1.7 3.1 3 7 3s7-1.3 7-3"/></symbol><symbol id="i-users" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 7M18 14.6a6.5 6.5 0 0 1 3.5 5.4"/></symbol><symbol id="i-blocks" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/><rect x="8" y="3" width="8" height="8" rx="1.5"/></symbol><symbol id="i-chart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18M6 20v-8M11 20V5M16 20v-6M21 20V9"/></symbol><symbol id="i-report" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6v18h12V7z"/><path d="M14 3v4h4M9.2 14.5a3 3 0 0 0 5.4 1.5M14.8 12.5a3 3 0 0 0-5.4-1.5"/></symbol><symbol id="i-target" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2"/></symbol></svg>
+<script>/* marks that scripting works; if this page's script fails, everything is shown as plain content */
+(function(d){ d.classList.add('js'); addEventListener('error', function(e){ if (e.error && (!e.filename || e.filename === location.href)){ d.classList.remove('js'); document.body.classList.remove('locked'); } }); })(document.documentElement);</script>
 <div id="crew" aria-hidden="true"></div>
 <div id="intro" aria-hidden="true">
   <img class="mark" alt="" src="data:image/svg+xml;base64,{{ICON}}">
@@ -527,29 +671,32 @@ footer.site .logo{width:76px;background:var(--muted)}
       <div class="fig media" data-hairline-host="bandeja" data-label-a11y="Ilustração: as páginas de um site numa bandeja; a página sob o ponteiro se ergue."><p class="hl-read" data-hairline-read aria-live="polite"></p></div>
     </div>
     <div class="grid3">
-      <article class="tile format" style="--ic:var(--action)">
+      <article class="tile format" style="--ic:var(--action);--on-ic:var(--cream-50)">
         <div class="browser" aria-hidden="true"><div class="bar"><i></i><i></i><i></i></div>
           <div class="pg"><div class="blk ink" style="height:10px;width:40%"></div><div class="blk red" style="height:46px"></div><div class="blk" style="height:8px;width:80%"></div><div class="blk" style="height:8px;width:65%"></div><div class="blk orange" style="height:16px;width:36%"></div><div class="blk" style="height:40px"></div><div class="blk" style="height:40px"></div><div class="blk ink" style="height:30px"></div><div class="blk red" style="height:16px;width:40%"></div></div></div>
         <h3>Landing Page</h3>
         <p>Uma página só, com o essencial, que leva a pessoa até a ação: pedir orçamento, chamar no WhatsApp ou preencher um formulário.</p>
         <ul><li><span class="li-ico"><svg aria-hidden="true"><use href="#i-layout"/></svg></span><span>Seções definidas conforme o objetivo</span></li><li><span class="li-ico"><svg aria-hidden="true"><use href="#i-cursor"/></svg></span><span>Chamadas para ação e caminhos de contato</span></li><li><span class="li-ico"><svg aria-hidden="true"><use href="#i-devices"/></svg></span><span>Layout responsivo e navegação clara</span></li></ul>
         <footer><span>Sob proposta</span><span class="muted">Ideal para campanhas</span></footer>
+        <a class="card-link" href="landing-page.html" aria-label="Ver escopo e exemplos: Landing Page">Ver escopo e exemplos</a>
       </article>
-      <article class="tile format" style="--ic:var(--accent)">
+      <article class="tile format" style="--ic:var(--accent);--on-ic:var(--navy-950)">
         <div class="browser" aria-hidden="true"><div class="bar"><i></i><i></i><i></i></div>
           <div class="pg"><div style="display:flex;gap:6px"><div class="blk ink" style="height:10px;width:24%"></div><div class="blk" style="height:10px;flex:1"></div></div><div class="blk orange" style="height:50px"></div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px"><div class="blk" style="height:34px"></div><div class="blk red" style="height:34px"></div><div class="blk" style="height:34px"></div></div><div class="blk" style="height:8px;width:70%"></div><div class="blk" style="height:44px"></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px"><div class="blk ink" style="height:40px"></div><div class="blk" style="height:40px"></div></div></div></div>
         <h3>Site Completo</h3>
         <p>Páginas para serviços, história, diferenciais e contato, organizadas para quem chega pelo Google, por indicação ou pelas redes.</p>
         <ul><li><span class="li-ico"><svg aria-hidden="true"><use href="#i-pages"/></svg></span><span>Estrutura de páginas definida no briefing</span></li><li><span class="li-ico"><svg aria-hidden="true"><use href="#i-compass"/></svg></span><span>Conteúdo e navegação tratados juntos</span></li><li><span class="li-ico"><svg aria-hidden="true"><use href="#i-search"/></svg></span><span>Configurações básicas de indexação</span></li></ul>
         <footer><span>Sob proposta</span><span class="muted">Ideal para institucionais</span></footer>
+        <a class="card-link" href="site-completo.html" aria-label="Ver escopo e exemplos: Site Completo">Ver escopo e exemplos</a>
       </article>
-      <article class="tile format" style="--ic:var(--red-400)">
+      <article class="tile format" style="--ic:var(--red-400);--on-ic:var(--navy-950)">
         <div class="browser" aria-hidden="true"><div class="bar"><i></i><i></i><i></i></div>
           <div class="pg pg-dash"><div class="kpis"><div class="blk orange"></div><div class="blk red"></div><div class="blk ink"></div></div><div class="bars"><i style="height:38%"></i><i style="height:62%"></i><i class="r" style="height:48%"></i><i style="height:78%"></i><i style="height:66%"></i><i class="r" style="height:92%"></i></div><div class="flow"><b></b><span></span><b class="o"></b><span></span><b class="r"></b></div></div></div>
         <h3>Soluções Personalizadas</h3>
         <p>Para quando o site precisa se ligar ao dia a dia da empresa: contatos que viram pedidos organizados, integração com planilhas e CRMs, painéis de acompanhamento.</p>
         <ul><li><span class="li-ico"><svg aria-hidden="true"><use href="#i-loop"/></svg></span><span>Automações que acabam com tarefas repetidas</span></li><li><span class="li-ico"><svg aria-hidden="true"><use href="#i-database"/></svg></span><span>Sistemas internos feitos para a sua equipe</span></li><li><span class="li-ico"><svg aria-hidden="true"><use href="#i-chart"/></svg></span><span>Painéis para acompanhar o negócio</span></li></ul>
         <footer><span>Sob proposta</span><span class="muted">Ideal para rotinas e processos</span></footer>
+        <a class="card-link" href="solucoes-personalizadas.html" aria-label="Ver escopo e exemplos: Soluções Personalizadas">Ver escopo e exemplos</a>
       </article>
     </div>
     <div class="pillars">
@@ -610,6 +757,29 @@ footer.site .logo{width:76px;background:var(--muted)}
         </div>
         <div class="handle" id="handle"></div>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRINCIPAIS PROJETOS (dados em src/projetos.js) -->
+<section class="sec pj" id="projetos" aria-labelledby="pjTitle">
+  <div class="pj-bg" aria-hidden="true"></div>
+  <div class="wrap">
+    <div class="sec-head pj-head">
+      <div>
+        <h2 class="display" id="pjTitle">Principais <em>projetos</em>.</h2>
+        <p>Três projetos recentes e o que cada um resolve: reservas pelo WhatsApp, pedido online e orientação antes do primeiro contato.</p>
+      </div>
+    </div>
+  </div>
+  <div class="pj-stage" role="region" aria-roledescription="carrossel" aria-label="Principais projetos. Use as setas do teclado para trocar de projeto." tabindex="0">
+    <div class="pj-track"></div>
+    <div class="pj-caption" aria-live="polite"></div>
+    <div class="pj-detail" aria-live="polite"></div>
+    <div class="pj-ctrl">
+      <button class="pj-arrow prev" type="button" aria-label="Projeto anterior"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+      <p class="pj-count" aria-hidden="true"><span class="pj-now">01</span><span class="pj-bar"><i></i></span><span class="pj-total">06</span></p>
+      <button class="pj-arrow next" type="button" aria-label="Próximo projeto"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button>
     </div>
   </div>
 </section>
@@ -781,469 +951,8 @@ document.body.classList.add('locked');
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const $ = (s, r=document) => r.querySelector(s);
 const $$ = (s, r=document) => [...r.querySelectorAll(s)];
-const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
-const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 
-/* ========== 1) the crew: cursors that build the page ========== */
-// Like a shared design file: several cursors, each with a colour and a name, work in parallel.
-// Each one takes the nearest waiting part, flies to it and builds it the way that part is made:
-// a crosshair drags a box (a grey placeholder, then the real thing), a text cursor types the
-// words in, an arrow places a group. When the whole page is built, the crew leaves the screen.
-const crewEl = $('#crew');
-// the animations switch in the header; the choice is remembered in this browser
-const ANIM = { on: (() => { try { return localStorage.getItem('lorz-anim') !== 'off'; } catch { return true; } })(), force: false };
-const crewOn = () => ANIM.on || ANIM.force;
-const pace = reduce ? 0.7 : 1;
-const ease = (x) => (x < 0 ? 0 : x > 1 ? 1 : x < .5 ? 4*x*x*x : 1 - Math.pow(-2*x + 2, 3) / 2);
-const CUR = {
-  arrow: '<svg viewBox="0 0 22 22"><path d="M3 2 L3 17.5 L7.4 13.4 L10.4 20 L13 18.9 L10 12.4 L16 12.4 Z" fill="var(--wc)" stroke="var(--navy-950)" stroke-width="1.4" stroke-linejoin="round"/></svg>',
-  cross: '<svg viewBox="0 0 22 22"><path d="M11 2v18M2 11h18" stroke="var(--navy-950)" stroke-width="4.4" stroke-linecap="round"/><path d="M11 2v18M2 11h18" stroke="var(--wc)" stroke-width="2" stroke-linecap="round"/></svg>',
-  text: '<svg viewBox="0 0 22 22"><path d="M8 3h6M8 19h6M11 3v16" stroke="var(--navy-950)" stroke-width="4.2" stroke-linecap="round"/><path d="M8 3h6M8 19h6M11 3v16" stroke="var(--wc)" stroke-width="2" stroke-linecap="round"/></svg>',
-};
-CUR.move = '<svg viewBox="0 0 22 22"><path d="M11 2v18M2 11h18M11 2l-3 3M11 2l3 3M11 20l-3-3M11 20l3-3M2 11l3-3M2 11l3 3M20 11l-3-3M20 11l-3 3" stroke="var(--navy-950)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M11 2v18M2 11h18M11 2l-3 3M11 2l3 3M11 20l-3-3M11 20l3-3M2 11l3-3M2 11l3 3M20 11l-3-3M20 11l-3 3" stroke="var(--wc)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-CUR.copy = CUR.arrow.replace('</svg>', '<circle cx="16.5" cy="17" r="5" fill="var(--wc)" stroke="var(--navy-950)" stroke-width="1.4"/><path d="M16.5 14.5v5M14 17h5" stroke="var(--wi)" stroke-width="1.6" stroke-linecap="round"/></svg>');
-CUR.resize = '<svg viewBox="0 0 22 22"><path d="M4 4l14 14M4 4v6M4 4h6M18 18v-6M18 18h-6" stroke="var(--navy-950)" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 4l14 14M4 4v6M4 4h6M18 18v-6M18 18h-6" stroke="var(--wc)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-const HOT = { arrow: [3, 2], cross: [11, 11], text: [11, 11], move: [11, 11], copy: [3, 2], resize: [11, 11] };
-const VERB = { text: 'Digitar', cross: 'Desenhar', move: 'Mover', copy: 'Copiar', resize: 'Redimensionar', arrow: 'Posicionar' };
-const TEAM = [['Design','--orange-500','--navy-950','draw'],['Front','--red-400','--navy-950','resize'],['Dev','--cream-200','--navy-950','move'],['UX','--orange-700','--cream-50','copy'],['Conteúdo','--red-600','--cream-50','type'],['Redação','--orange-300','--navy-950','type']];
-// how each part gets built: typed, drawn as a box, copied from the one before it, resized from small, or moved into place
-const sameKind = (a, b) => a && b && a.classList.contains('build') && a.tagName === b.tagName && a.classList[0] === b.classList[0];
-const kindOf = (el) => {
-  if (el.matches('h1,h2,p,.lede,.compare-wrap > div:first-child')) return 'text';
-  if (el.matches('.format,.sol,.pillars > div,.step,.qa,.needs') && sameKind(el.previousElementSibling, el)) return 'copy';
-  if (el.matches('.fig,.retrato,.compare,.scope-preview,form')) return 'resize';
-  if (el.matches('.format,.sol,.pillars > div,.step')) return 'cross';
-  return 'move';
-};
-const nameOf = (el) => el.dataset.label || (el._label ? el._label(el) : 'Camada');
-
-// the text blocks inside a part, typed one after another once its space exists
-const TEXTS = 'h3,h4,p,li > span:last-child,footer > span,.num,legend,.needs label > span,.label,.pv-sum strong';
-const SKIP = 'svg,script,style,textarea,select,option,.hl-read,.ans,.compare';
-function textsIn(el){
-  const ok = (t) => !t.closest(SKIP) && (t.textContent || '').trim();
-  let blocks = [...el.querySelectorAll(TEXTS)].filter(t => t.offsetWidth && t.getClientRects().length && ok(t));
-  blocks = blocks.filter(t => !blocks.some(u => u !== t && u.contains(t)));
-  if (!el._wrapped){
-    // loose text (a button's label, a link, a tag) gets its own span so it can be typed without hiding its box
-    el._wrapped = true;
-    const walk = document.createTreeWalker(el, NodeFilter.SHOW_TEXT), nodes = [];
-    while (walk.nextNode()){ const n = walk.currentNode, p = n.parentElement; if (n.nodeValue.trim() && !p.closest(SKIP) && !blocks.some(b => b.contains(p)) && !p.classList.contains('tw')) nodes.push(n); }
-    nodes.forEach(n => {
-      const m = n.nodeValue.match(/^(\s*)([\s\S]*?)(\s*)$/), span = document.createElement('span');
-      span.className = 'tw'; span.textContent = m[2];
-      const frag = document.createDocumentFragment();
-      if (m[1]) frag.append(m[1]); frag.append(span); if (m[3]) frag.append(m[3]);
-      n.replaceWith(frag);
-    });
-  }
-  // only text that is actually on screen in this layout (a hidden menu item has no place to be typed in)
-  const loose = [...el.querySelectorAll('.tw')].filter(t => t.offsetWidth && t.getClientRects().length && ok(t) && !blocks.some(b => b.contains(t)));
-  return [...blocks, ...loose].sort((a, b) => (a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1));
-}
-const hideText = (t) => { t.style.clipPath = 'inset(-6px 100% -6px -6px)'; };
-const showText = (t, f) => { t.style.clipPath = f >= 1 ? '' : `inset(-6px ${(1 - f) * 100}% -6px -6px)`; };
-const groupOf = (el) => el.closest('main > section') || 'top';
-const clampN = (v, a, b) => Math.max(a, Math.min(b, v));
-
-const workers = TEAM.map(([name, c, i, role]) => {
-  const root = document.createElement('div'); root.className = 'wk off'; root.style.cssText = `--wc:var(${c});--wi:var(${i})`;
-  root.innerHTML = `<span class="wk-cur"></span><span class="wk-tag">${name}</span>`;
-  const sel = document.createElement('div'); sel.className = 'wk-sel'; sel.style.cssText = root.style.cssText;
-  sel.innerHTML = '<i></i><i></i><i></i><i></i><span></span><b></b>';
-  const car = document.createElement('i'); car.className = 'wk-caret'; car.style.cssText = root.style.cssText;
-  crewEl.append(sel, car, root);
-  return { name, role, root, sel, car, cur: $('.wk-cur', root), kind: '', x: 0, y: 0, born: false, state: 'rest', task: null, pi: 0, t0: 0, dur: 0, from: [0, 0], hop: 0 };
-});
-function setKind(w, k){ if (w.kind !== k){ w.kind = k; w.cur.innerHTML = CUR[k]; w.root.style.setProperty('--hx', HOT[k][0]); w.root.style.setProperty('--hy', HOT[k][1]); } }
-function click(w){ w.root.classList.remove('click'); void w.root.offsetWidth; w.root.classList.add('click'); }
-// everything the crew draws lives in page coordinates, so it scrolls with the content (no frame of lag)
-const pg = (x, y) => `translate(${x + scrollX}px,${y + scrollY}px)`;
-// parts in the sticky header stay put on screen: while a cursor works there, its marks live in a fixed layer
-const crewFix = document.createElement('div'); crewFix.id = 'crewFix'; crewEl.after(crewFix);
-const stuck = (el) => !!el.closest('header');
-const pw = (w, x, y) => w.fix ? `translate(${x}px,${y}px)` : pg(x, y);
-function layer(w, fix){ if (w.fix === fix) return; w.fix = fix; (fix ? crewFix : crewEl).append(w.sel, w.car, w.root); }
-function caret(w, x, y, h, on){ if (on){ w.car.style.transform = pw(w, x, y); w.car.style.height = h + 'px'; } w.car.classList.toggle('on', on); }
-const offscreen = (x, y) => { const cx = innerWidth/2, cy = innerHeight/2, a = Math.atan2(y - cy, x - cx) || Math.random()*6.28, R = Math.hypot(cx, cy) + 80; return [cx + Math.cos(a)*R, cy + Math.sin(a)*R]; };
-const at = (r, fx, fy) => [r.left + r.width*fx, r.top + r.height*fy];
-function home(el){ const r = el.getBoundingClientRect(), o = el._op || { dx: 0, dy: 0, s: 1 }; return { left: r.left - o.dx, top: r.top - o.dy, width: r.width / o.s, height: r.height / o.s }; }
-function pose(el, dx, dy, s){ el._op = { dx, dy, s }; el.style.translate = `${dx}px ${dy}px`; el.style.scale = String(s); }
-function unpose(el){ el._op = null; el.style.translate = ''; el.style.scale = ''; el.style.transformOrigin = ''; }
-function drawSel(w, r, fx = 1, fy = 1){
-  // the name tag never hides: under the sticky header it moves inside the box, just below the header; at the top edge it goes under the box
-  const tag = $('span', w.sel), hb = w.fix ? 0 : $('#hdr').getBoundingClientRect().bottom, inside = !w.fix && r.top - 26 < hb, under = w.fix && r.top < 26;
-  w.sel.classList.toggle('in', inside); w.sel.classList.toggle('under', under);
-  tag.style.top = inside ? Math.max(4, hb - r.top + 18) + 'px' : '';
-  Object.assign(w.sel.style, { transform: pw(w, r.left - 4, r.top - 4), width: r.width*fx + 8 + 'px', height: r.height*fy + 8 + 'px' });
-  $('b', w.sel).textContent = Math.round(r.width*fx) + ' × ' + Math.round(r.height*fy);
-}
-// a part the crew builds appears at once (its fade is only for parts finished off screen)
-function show(el){ el.classList.add('now', 'built'); }
-function label(w, verb, el){ $('span', w.sel).textContent = verb + ' · ' + nameOf(el); }
-
-/* The steps that build one part. Each step says where the cursor starts (aim), how long it takes,
-   and what one frame of it looks like; steps run one after another, never two at once. */
-// the lines a block of text sits on, relative to the block (one box per line)
-function lineBoxes(block){
-  const rg = document.createRange(); rg.selectNodeContents(block);
-  const b = block.getBoundingClientRect(), lines = [];
-  for (const r of rg.getClientRects()){
-    if (r.width < 1) continue;
-    const L = lines.find(l => Math.abs(l.top - r.top) < 4);
-    if (L){ L.left = Math.min(L.left, r.left); L.right = Math.max(L.right, r.right); L.bottom = Math.max(L.bottom, r.bottom); }
-    else lines.push({ top: r.top, bottom: r.bottom, left: r.left, right: r.right });
-  }
-  lines.sort((a, c) => a.top - c.top);
-  return lines.length ? lines.map(l => ({ top: l.top - b.top, bottom: l.bottom - b.top, left: l.left - b.left, right: l.right - b.left })) : [{ top: 0, bottom: b.height, left: 0, right: b.width }];
-}
-// reveal f of the text in reading order: the full lines above, part of the current one; returns where the caret is
-function typeClip(block, lines, f){
-  const W = block.getBoundingClientRect().width, total = lines.reduce((n, l) => n + l.right - l.left, 0);
-  let d = f * total, i = 0;
-  while (i < lines.length - 1 && d > lines[i].right - lines[i].left){ d -= lines[i].right - lines[i].left; i++; }
-  const l = lines[i], x = l.left + Math.min(d, l.right - l.left), nx = lines[i + 1], bot = nx ? Math.min(l.bottom, nx.top) : l.bottom;
-  block.style.clipPath = f >= 1 ? '' : `polygon(-6px -6px, ${W + 6}px -6px, ${W + 6}px ${l.top}px, ${x}px ${l.top}px, ${x}px ${bot}px, -6px ${bot}px)`;
-  return { x, top: l.top, h: l.bottom - l.top };
-}
-function typeStep(w, el, block, wholeSel, first = true){
-  const chars = (block.textContent || '').trim().length, beat = first ? 140 : 50, typing = clampN(chars * 4.6, 110, 560);
-  let lines = null;
-  const start = () => { const r = block.getBoundingClientRect(), L = (lines || lineBoxes(block))[0]; return [r.left + L.left - 3, r.top + (L.top + L.bottom) / 2]; };
-  return { cur: 'text', dur: (beat + typing) * pace,
-    aim: start,
-    begin: () => { label(w, 'Digitar', el); lines = lineBoxes(block); },
-    step: (e, p) => {
-      // a short beat for the click, then the letters come at an even pace
-      if (!lines) lines = lineBoxes(block);
-      const ms = p * (beat + typing), f = clampN((ms - beat) / typing, 0, 1), c = typeClip(block, lines, f), r = block.getBoundingClientRect();
-      caret(w, r.left + c.x, r.top + c.top, c.h, ms > beat * .7);
-      drawSel(w, wholeSel ? el.getBoundingClientRect() : r);
-      return start();
-    },
-    end: () => { showText(block, 1); caret(w, 0, 0, 0, false); } };
-}
-// edit a text in place: click it, select the old words, type the new ones over them
-function caretAtEnd(block){
-  const n = block.firstChild, rg = document.createRange();
-  if (n && n.nodeType === 3){ rg.setStart(n, n.length); rg.collapse(true); const r = rg.getClientRects()[0] || rg.getBoundingClientRect(); if (r && (r.height || r.left)) return r; }
-  const b = block.getBoundingClientRect(); return { left: b.left, top: b.top, height: b.height };
-}
-const esc = (t) => t.replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
-// the shared start and end of two texts, cut at word boundaries
-function sameEnds(a, b){
-  let i = 0; while (i < a.length && i < b.length && a[i] === b[i]) i++;
-  while (i > 0 && !/\s/.test(a[i - 1])) i--;
-  let j = 0; while (j < a.length - i && j < b.length - i && a[a.length - 1 - j] === b[b.length - 1 - j]) j++;
-  while (j > 0 && !/\s/.test(a[a.length - j] || ' ')) j--;
-  return [i, j];
-}
-function caretAt(block, offset){
-  const n = block.firstChild, rg = document.createRange();
-  if (n && n.nodeType === 3){ rg.setStart(n, Math.min(offset, n.length)); rg.collapse(true); const r = rg.getClientRects()[0] || rg.getBoundingClientRect(); if (r && (r.height || r.left)) return r; }
-  const b = block.getBoundingClientRect(); return { left: b.left, top: b.top, height: b.height };
-}
-// the held height is let go smoothly, once the new words are in
-function release(b){
-  if (!b.style.minHeight) return;
-  const h = b.getBoundingClientRect().height; b.style.minHeight = '';
-  const n = b.getBoundingClientRect().height; if (Math.abs(n - h) < 1) return;
-  b.style.minHeight = h + 'px'; b.style.transition = 'min-height .3s cubic-bezier(.2,.7,.2,1)'; void b.offsetWidth; b.style.minHeight = n + 'px';
-  setTimeout(() => { b.style.minHeight = ''; b.style.transition = ''; }, 320);
-}
-function editStep(w, el, block, first){
-  const neu = block._new, old = block.textContent, [pi, si] = sameEnds(old, neu);
-  const pre = old.slice(0, pi), suf = old.slice(old.length - si), oldMid = old.slice(pi, old.length - si), newMid = neu.slice(pi, neu.length - si);
-  const beat = first ? 140 : 50, select = 170, typing = clampN(newMid.length * 4.6, 110, 560);
-  // the cursor clicks where the change starts
-  const start = () => { const c = caretAt(block, pi); return [c.left - 2, c.top + c.height / 2]; };
-  let marked = false;
-  return { cur: 'text', dur: (beat + select + typing) * pace,
-    aim: start,
-    begin: () => label(w, 'Corrigir', el),
-    step: (e, p) => {
-      const ms = p * (beat + select + typing);
-      if (ms < beat){ /* the click */ }
-      else if (ms < beat + select){
-        if (!marked){ marked = true; block.innerHTML = esc(pre) + '<span class="wk-mark">' + esc(oldMid) + '</span>' + esc(suf); }
-        caret(w, 0, 0, 0, false);
-      } else {
-        const n = Math.round(newMid.length * clampN((ms - beat - select) / typing, 0, 1));
-        block.textContent = pre + newMid.slice(0, n) + suf || '\u200b';
-        const c = caretAt(block, pi + n); caret(w, c.left, c.top, c.height, true);
-      }
-      drawSel(w, el.getBoundingClientRect());
-      return start();
-    },
-    end: () => { block.textContent = neu; block._new = null; block._edit = false; caret(w, 0, 0, 0, false); release(block); } };
-}
-// a viewport point, turned into the copy's own position inside the section that holds it
-function placeGhost(g, x, y, s){
-  const op = g.offsetParent || document.body, o = op.getBoundingClientRect();
-  g.style.transform = `translate(${x - o.left - op.clientLeft}px,${y - o.top - op.clientTop}px) scale(${s})`;
-}
-function later(task){ textsIn(task.el).forEach(hideText); task.next = { el: task.el, kind: 'inside', done: task.done }; }
-function plan(w, task){
-  const el = task.el, kind = task.kind, steps = task.steps = [];
-  if (kind === 'inside'){
-    // a copied part has its words edited (select the old, type the new); a drawn one has them typed in
-    textsIn(el).filter(b => !b._edit || b._new !== b.textContent || (b.textContent = b._new, b._edit = false))
-      .forEach((b, i) => steps.push(b._edit ? editStep(w, el, b, i === 0) : typeStep(w, el, b, true, i === 0)));
-  } else if (kind === 'text'){
-    steps.push(Object.assign(typeStep(w, el, el, false), { begin: () => { label(w, 'Digitar', el); hideText(el); show(el); } }));
-  } else if (kind === 'cross'){
-    const r0 = home(el);
-    steps.push({ cur: 'cross', dur: clampN((r0.width + r0.height) * .5, 320, 620) * pace,
-      aim: () => at(home(el), 0, 0),
-      begin: () => { label(w, 'Desenhar', el); w.sel.classList.add('ph'); },
-      step: (e) => { const r = el.getBoundingClientRect(); drawSel(w, r, Math.max(e, .02), Math.max(e, .02)); return at(r, e, e); },
-      end: () => { w.sel.classList.remove('ph'); textsIn(el).forEach(hideText); show(el); later(task); } });
-  } else if (kind === 'copy'){
-    const src = el.previousElementSibling;
-    let ghost = null, gTexts = [];
-    steps.push({ cur: 'copy', dur: 520 * pace,
-      aim: () => { const r = src.getBoundingClientRect(); return at(r, .5, .5); },
-      begin: () => {
-        label(w, 'Copiar', src);
-        const r = src.getBoundingClientRect();
-        ghost = task.ghost = src.cloneNode(true);
-        ghost.querySelectorAll('[id]').forEach(n => n.removeAttribute('id')); ghost.removeAttribute('id');
-        ghost.setAttribute('aria-hidden', 'true'); ghost.classList.add('now', 'built');
-        const shut = ghost.hasAttribute('data-open'); if (shut) ghost.removeAttribute('data-open');
-        Object.assign(ghost.style, { position: 'absolute', left: '0', top: '0', visibility: 'hidden', margin: '0', width: r.width + 'px', height: r.height + 'px', translate: 'none', transition: 'none', zIndex: '55', pointerEvents: 'none', clipPath: '' });
-        ghost.classList.add('wk-lift');
-        // placed on top of the original before it is shown, so it never appears anywhere else
-        src.parentNode.appendChild(ghost);
-        if (shut) ghost.style.height = '';
-        placeGhost(ghost, r.left, r.top, 1);
-        ghost.style.visibility = '';
-        task.slot = document.createElement('div'); task.slot.className = 'wk-slot'; task.slot.style.cssText = w.root.style.cssText;
-        { const H = home(el); Object.assign(task.slot.style, { transform: pg(H.left, H.top), width: H.width + 'px', height: H.height + 'px' }); }
-        crewEl.prepend(task.slot);
-      },
-      step: (e) => {
-        const a = src.getBoundingClientRect(), b = home(el), x = a.left + (b.left - a.left) * e, y = a.top + (b.top - a.top) * e - Math.sin(Math.PI * e) * 18;
-        placeGhost(ghost, x, y, 1 + Math.sin(Math.PI * Math.min(1, e * 1.4)) * .02);
-        Object.assign(task.slot.style, { transform: pg(b.left, b.top), width: b.width + 'px', height: b.height + 'px' });
-        const r = { left: x, top: y, width: a.width, height: ghost.offsetHeight }; drawSel(w, r); return at(r, .5, .5);
-      } });
-    // dropped: the duplicate becomes the new part, still carrying the original's words
-    const drop = steps[steps.length - 1];
-    drop.end = () => {
-      const old = textsIn(src), mine = textsIn(el);
-      // every block is measured with its new words and with the old ones, all at once, and keeps the taller
-      const ed = mine.filter((b, i) => !b.children.length && old[i]);
-      const hNew = ed.map(b => b.getBoundingClientRect().height);
-      const ps = [...new Set([el, ...ed.map(b => b.parentElement)])], pNew = ps.map(q => q.getBoundingClientRect().height);
-      ed.forEach(b => { b._new = b.textContent; b.textContent = old[mine.indexOf(b)].textContent; b._edit = true; });
-      ed.forEach((b, i) => { b.style.minHeight = Math.max(hNew[i], b.getBoundingClientRect().height) + 'px'; });
-      // the part itself and every row that wraps (a footer with two labels, a group of chips) are held too, so a longer label cannot reflow them mid-edit
-      ps.forEach((q, i) => { q._hold = true; q.style.minHeight = Math.max(pNew[i], q.getBoundingClientRect().height) + 'px'; });
-      mine.forEach(b => { if (!ed.includes(b)) hideText(b); });
-      if (task.slot){ task.slot.remove(); task.slot = null; }
-      el.classList.add('no-ph'); show(el); ghost.remove(); task.ghost = null;
-      task.next = { el, kind: 'inside', done: task.done };
-    };
-  } else {
-    // move or resize: the part is posed away (or small) and brought to its place
-    const o = task.o;
-    steps.push({ cur: kind, dur: (kind === 'resize' ? 460 : 380) * pace,
-      aim: () => { const H = home(el); return kind === 'resize' ? [H.left + H.width * o.s, H.top + H.height * o.s] : [H.left + o.dx + H.width / 2, H.top + o.dy + H.height / 2]; },
-      begin: () => { label(w, VERB[kind], el); textsIn(el).forEach(hideText); el.style.transformOrigin = '0 0'; pose(el, o.dx, o.dy, o.s); show(el); },
-      step: (e) => { const k = 1 - e; pose(el, o.dx * k, o.dy * k, o.s + (1 - o.s) * e); const r = el.getBoundingClientRect(); drawSel(w, r); return kind === 'resize' ? [r.right, r.bottom] : at(r, .5, .5); },
-      end: () => { unpose(el); later(task); } });
-  }
-}
-
-const queue = [];
-let isComplete = () => false, raf = 0;
-function finish(task){
-  const el = task.el;
-  if (task.ghost){ task.ghost.remove(); task.ghost = null; }
-  if (task.slot){ task.slot.remove(); task.slot = null; }
-  if (el._op) unpose(el);
-  el.classList.add('built'); el.style.clipPath = '';
-  // its text comes later, from the content cursor: keep it hidden until then
-  if (task.next){ const n = task.next; task.next = null; queue.push(n); return; }
-  el.querySelectorAll('[style*="clip-path"]').forEach(n => { n.style.clipPath = ''; });
-  textsIn(el).forEach(b => { if (b._edit){ b.textContent = b._new; b._new = null; b._edit = false; } release(b); });
-  [el, ...el.querySelectorAll('*')].forEach(q => { if (q._hold){ q._hold = false; release(q); } });
-  el._q = false; el._done = true; task.done && task.done(el);
-}
-// a task dropped half way: no copy, slot or pose left behind, and copied words go back to the part's own
-function abort(t){
-  if (t.ghost){ t.ghost.remove(); t.ghost = null; }
-  if (t.slot){ t.slot.remove(); t.slot = null; }
-  if (t.el._op) unpose(t.el);
-  [t.el, ...t.el.querySelectorAll('*')].forEach(n => {
-    if (n._edit){ n.textContent = n._new; n._new = null; n._edit = false; n.style.minHeight = ''; }
-    if (n._hold){ n._hold = false; n.style.minHeight = ''; }
-  });
-  t.el._q = false;
-}
-function enqueue(el, done, defer){
-  if (el._q || el.classList.contains('built')) return;
-  el._q = true; queue.push({ el, done }); if (!defer) assign();
-}
-// A small team, one job each, every cursor doing one thing at a time. The order is a builder's:
-// a part's text is typed only after its space exists, a copy waits until the part it copies is
-// finished (text included), and loose headings wait until the structure of their section is in place.
-const kOf = (t) => t.kind || kindOf(t.el);
-const RANK = { cross: 0, resize: 0, move: 0, copy: 1, text: 2, inside: 2 };
-const ROLE = { cross: 'draw', resize: 'resize', move: 'move', copy: 'copy', text: 'type', inside: 'type' };
-const groupIndex = (el) => { const g = groupOf(el); return g === 'top' ? -1 : [...document.querySelectorAll('main > section')].indexOf(g); };
-const structurePending = (g, except) => queue.some(t => t !== except && groupOf(t.el) === g && RANK[kOf(t)] === 0) || workers.some(w => w.task && groupOf(w.task.el) === g && RANK[w.task.kind] === 0);
-const taskReady = (t) => { const k = kOf(t); return k === 'copy' ? !!t.el.previousElementSibling._done : k === 'text' ? !structurePending(groupOf(t.el), t) : true; };
-const before = (a, b) => groupIndex(a.el) - groupIndex(b.el) || RANK[kOf(a)] - RANK[kOf(b)] || (a.el.compareDocumentPosition(b.el) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1);
-let crewHold = true;
-function assign(){
-  // parts already scrolled past (or with the animations off) are simply finished
-  for (let guard = 0; guard < 400; guard++){
-    const t = queue.find(t => { const r = t.el.getBoundingClientRect(); return !crewOn() || !r.width || r.bottom < -40 || r.top > innerHeight + 240 || getComputedStyle(t.el).visibility === 'hidden'; });
-    if (!t) break;
-    queue.splice(queue.indexOf(t), 1); finish(t);
-  }
-  if (crewHold && crewOn()){ return; }
-  for (const w of workers){
-    if (w.state !== 'rest') continue;
-    const cands = queue.filter(t => ROLE[kOf(t)] === w.role && taskReady(t)).sort(before);
-    if (!cands.length) continue;
-    const task = cands[0];
-    queue.splice(queue.indexOf(task), 1);
-    const kind = task.kind = kOf(task), H = home(task.el);
-    task.o = reduce ? { dx: 0, dy: 0, s: 1 } : kind === 'move' ? moveFrom(task.el, H) : kind === 'resize' ? { dx: 0, dy: 0, s: .42 } : { dx: 0, dy: 0, s: 1 };
-    const [tx, ty] = at(H, 0, 0);
-    // each cursor jumps from where it stopped; the first time, it comes in from the edge
-    if (!w.born){ [w.x, w.y] = offscreen(tx + (workers.indexOf(w) - 2.5) * 90, ty); w.born = true; }
-    w.task = task; w.pi = 0;
-    layer(w, stuck(task.el));
-    { const [hx, hy] = HOT[w.kind || 'arrow']; w.root.style.transform = pw(w, w.x - hx, w.y - hy); }
-    w.root.classList.remove('off');
-    plan(w, task);
-    if (!task.steps.length){ w.state = 'rest'; w.root.classList.add('off'); finish(task); return assign(); }
-    hopTo(w, performance.now());
-  }
-  if (!queue.length && workers.every(w => w.state === 'rest') && isComplete()){ workers.forEach(w => { w.born = false; }); }
-  if (crewOn() && !raf) raf = requestAnimationFrame(tick);
-}
-function moveFrom(el, H){
-  const busy = workers.filter(w => w.task && w.task.el !== el).map(w => home(w.task.el));
-  const hit = (r) => busy.reduce((n, b) => n + Math.max(0, Math.min(r.right, b.left + b.width) - Math.max(r.left, b.left)) * Math.max(0, Math.min(r.bottom, b.top + b.height) - Math.max(r.top, b.top)), 0);
-  let best = null; const top = stuck(el);   // the header's parts slide in sideways, never over the hero
-  for (let i = 0; i < 16; i++){
-    const a = (i / 16) * Math.PI * 2 + Math.random() * .3, d = 60 + Math.random() * 50, dx = Math.cos(a) * d, dy = top ? 0 : Math.sin(a) * d * .7;
-    const r = { left: H.left + dx, top: H.top + dy, right: H.left + dx + H.width, bottom: H.top + dy + H.height };
-    const out = Math.max(0, -r.left) + Math.max(0, r.right - innerWidth) + Math.max(0, (top ? 0 : 64) - r.top) + Math.max(0, r.bottom - innerHeight);
-    const score = hit(r) * 4 + out * 400 + Math.random();
-    if (!best || score < best.score) best = { score, dx, dy };
-  }
-  return { dx: best.dx, dy: best.dy, s: 1 };
-}
-// the cursor jumps to where the next step starts, in a short arc
-function hopTo(w, now){
-  const s = w.task.steps[w.pi]; setKind(w, s.cur);
-  const [tx, ty] = s.aim(), d = Math.hypot(tx - w.x, ty - w.y);
-  if (d < 1) { w.x += 0.01; }
-  w.state = 'hop'; w.t0 = now; w.from = [w.x, w.y]; w.hop = Math.min(70, d * .25);
-  w.dur = clampN(d * .4, d < 140 ? 60 : 110, 380) * pace;
-}
-function tick(now){
-  raf = 0;
-  const docH = document.documentElement.scrollHeight;
-  if (crewEl._h !== docH){ crewEl._h = docH; crewEl.style.height = docH + 'px'; }
-  let busy = false;
-  for (const w of workers){
-    if (w.state === 'rest') continue;
-    busy = true;
-    const p = Math.min(1, (now - w.t0) / w.dur), e = ease(p), task = w.task, s = task && task.steps[w.pi];
-    if (w.state === 'hop'){
-      const [tx, ty] = s.aim();
-      w.x = w.from[0] + (tx - w.from[0]) * e; w.y = w.from[1] + (ty - w.from[1]) * e - Math.sin(Math.PI * e) * w.hop;
-      if (p >= 1){ w.state = 'work'; w.t0 = now; w.dur = s.dur; click(w); s.begin && s.begin(); [w.x, w.y] = s.step(0, 0); w.sel.classList.add('on'); }
-    } else if (w.state === 'work'){
-      [w.x, w.y] = s.step(e, p);
-      if (p >= 1){ s.end && s.end(); w.pi++; if (w.pi < task.steps.length) hopTo(w, now); else { w.state = 'hold'; w.t0 = now; w.dur = 100 * pace; } }
-    } else if (w.state === 'hold'){
-      drawSel(w, task.el.getBoundingClientRect());
-      if (p >= 1){
-        w.sel.classList.remove('on'); w.task = null; w.state = 'rest'; w.root.classList.add('off');
-        finish(task);
-        assign();
-      }
-    }
-    const [hx, hy] = HOT[w.kind || 'arrow'];
-    w.root.style.transform = pw(w, w.x - hx, w.y - hy);
-  }
-  if (busy && crewOn()) raf = requestAnimationFrame(tick);
-}
-function setAnim(on){
-  ANIM.on = on;
-  try { localStorage.setItem('lorz-anim', on ? 'on' : 'off'); } catch {}
-  $('#animToggle').setAttribute('aria-pressed', String(on));
-  crewEl.hidden = !crewOn();
-  if (!crewOn()){
-    workers.forEach(w => { if (w.task) finish(w.task); w.task = null; w.state = 'rest'; w.born = false; w.root.classList.add('off'); w.sel.classList.remove('on', 'ph'); w.car.classList.remove('on'); });
-    while (queue.length) finish(queue.shift());
-  }
-}
-workers.forEach(w => setKind(w, 'arrow'));
-setAnim(ANIM.on);
-$('#animToggle').addEventListener('click', () => setAnim(!ANIM.on));
-
-/* ========== 2) intro: the hero built by the crew ========== */
-const intro = $('#intro'), editor = $('#editor');
-if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
-const wait = ms => new Promise(r => setTimeout(r, ms));
-let introRunning = false;
-async function runIntro(force){
-  const builds = $$('header .build, .hero .build');
-  intro.hidden = false; editor.hidden = false; intro.classList.remove('gone'); editor.classList.remove('gone'); editor.innerHTML = '';
-  $('#intro .mark').classList.remove('lit'); const bar = $('#intro .bar i'); bar.style.transition = 'none'; bar.style.transform = 'scaleX(0)'; void bar.offsetWidth; bar.style.transition = '';
-  if (!ANIM.on && !force){ builds.forEach(b => { b.classList.add('built'); b._done = true; }); intro.hidden = true; editor.hidden = true; document.body.classList.remove('locked'); crewHold = false; assign(); return; }
-  crewHold = true;
-  introRunning = true; ANIM.force = !!force; crewEl.hidden = false; document.body.classList.add('locked');
-  const w = (ms) => wait(ms * pace);
-  scrollTo({ top: 0, behavior: 'instant' });
-  await w(100); bar.style.transform = 'scaleX(1)';
-  await w(500); $('#intro .mark').classList.add('lit');
-  await w(350); intro.classList.add('gone');
-  editor.innerHTML = '<div class="ruler"></div><div class="ruler-v"></div>';
-  await wait(30);
-  $$('.ruler, .ruler-v', editor).forEach(r => r.classList.add('on'));
-  [['h',.28],['h',.7],['v',.08],['v',.52],['v',.92]].forEach(([t,p],i) => { const g = document.createElement('div'); g.className = 'guide ' + t; g.style[t==='h'?'top':'left'] = (p*100) + '%'; editor.appendChild(g); setTimeout(() => g.classList.add('on'), 120 + i*90); });
-  await w(300);
-  document.body.classList.remove('locked');   // no need to wait: the hero keeps being built while the visitor scrolls
-  // the crew takes the hero's parts in their build order, several at once
-  const list = builds.map((el,i) => ({ el, o: +(el.dataset.order ?? -1), i })).sort((a,b) => a.o - b.o || a.i - b.i).map(x => x.el);
-  crewHold = false;
-  await new Promise(res => { let left = list.length; list.forEach(el => enqueue(el, () => { if (--left === 0) res(); }, true)); assign(); });
-  await w(350);
-  editor.classList.add('gone');
-  document.body.classList.remove('locked');
-  setTimeout(() => { editor.hidden = true; intro.hidden = true; editor.innerHTML = ''; }, 800);
-  introRunning = false;
-}
-// the sections are prepared right away (so nothing shows unbuilt), the crew waits for the opening
-startScrollBuild();
-runIntro();
-// replay: take the page apart and build it again, from the top
-$('#animReplay').addEventListener('click', async (e) => {
-  if (introRunning) return;
-  const btn = e.currentTarget; btn.classList.remove('spin'); void btn.offsetWidth; btn.classList.add('spin');
-  scrollTo({ top: 0, behavior: 'instant' });
-  // stop whatever the crew is doing before taking the page apart
-  [...queue, ...workers.map(w => w.task)].forEach(t => t && abort(t));
-  queue.length = 0;
-  $$('.build').forEach(el => { el._done = false; });
-  workers.forEach(w => { const t = w.task; if (t){ if (t.ghost) t.ghost.remove(); if (t.el._op) unpose(t.el); t.el._q = false; } w.task = null; w.state = 'rest'; w.born = false; w.root.classList.add('off'); w.sel.classList.remove('on', 'ph'); w.car.classList.remove('on'); });
-  document.querySelectorAll('.build [style*="clip-path"], .build[style*="clip-path"]').forEach(n => { n.style.clipPath = ''; });
-  if (window.__sb) window.__sb.reset();
-  $$('header .build, .hero .build').forEach(el => el.classList.remove('built', 'now'));
-  await wait(250);
-  await runIntro(true);
-  if (window.__sb) window.__sb.check();
-});
-
+{{JS_CREW}}
 /* ========== 3) color masks ========== */
 // hero portrait: hard-edged color spot follows the pointer inside the mask
 const hr = $('#heroRetrato'); let spot = 0, spotTarget = 0, spotRaf = 0;
@@ -1306,7 +1015,7 @@ const cmp = $('#compare'), after = $('#after'), handle = $('#handle'); let drag 
 function setPos(x){ const r = cmp.getBoundingClientRect(); const p = Math.max(0, Math.min(1, (x - r.left) / r.width)); after.style.clipPath = `inset(0 0 0 ${p*100}%)`; handle.style.left = p*100 + '%'; }
 cmp.addEventListener('pointerdown', e => { drag = true; cmp.setPointerCapture(e.pointerId); setPos(e.clientX); });
 cmp.addEventListener('pointermove', e => { if (drag || e.pointerType === 'mouse') setPos(e.clientX); });
-cmp.addEventListener('pointerup', () => drag = false);
+['pointerup', 'pointercancel', 'lostpointercapture'].forEach(ev => cmp.addEventListener(ev, () => { drag = false; }));
 
 // process progress
 const steps = $('#steps'), fill = $('#stepFill'), stepEls = $$('.step', steps);
@@ -1339,6 +1048,9 @@ $$('.qa button').forEach(b => b.addEventListener('click', () => {
 
 // contact: prepare the message in the page (nothing is sent)
 const form = $('#form'), ready = $('#ready'), out = $('#msgOut'), err = $('#err');
+{ const FORMATS = { 'landing-page': ['sSite', 'Landing Page'], 'site-completo': ['sSite', 'Site Completo'], 'solucoes-personalizadas': ['sSol', 'Soluções Personalizadas'] };
+  const f = FORMATS[new URLSearchParams(location.search).get('formato')];
+  if (f){ $('#' + f[0]).checked = true; $('#fMsg').value = `Tenho interesse em ${f[1]}. `; } }
 form.addEventListener('submit', e => {
   e.preventDefault();
   const d = new FormData(form), nome = (d.get('nome')||'').trim(), msg = (d.get('mensagem')||'').trim();
@@ -1356,61 +1068,7 @@ $('#copy').addEventListener('click', () => {
   try { navigator.clipboard.writeText(t).then(() => st.textContent = 'Mensagem copiada.', fallback); } catch { fallback(); }
 });
 
-/* ========== 5) sections built by the crew as you scroll ========== */
-function startScrollBuild(){
-  const TARGETS = '.sec-head h2, .sec-head > div > p, .sec-head > .fig, .format, .pillars > div, .sol, .compare-wrap > div:first-child, .scope-copy > *, .scope-preview, .step, .faq > div:first-child, .qa, .contact > div:first-child > *, form.tile';
-  const MEDIA = '.sec-head > .fig, .format, .sol, .scope-preview, form.tile';
-  const secs = $$('main > section:not(.hero)').map(sec => ({ sec, items: $$(TARGETS, sec), layer: null, t: 0 }));
-  const all = secs.flatMap(s => s.items.map(el => (el._s = s, el)));
-  const label = el => {
-    if (el.matches('.format, .sol')) return 'Card · ' + $('h3', el).textContent;
-    if (el.matches('.compare')) return 'Componente · Antes/Depois';
-    if (el.matches('.scope-preview')) return 'Componente · Prévia do escopo';
-    if (el.matches('fieldset')) return 'Grupo · ' + $('legend', el).textContent;
-    if (el.matches('form')) return 'Form · Contato';
-    if (el.matches('.fig')) return 'Hairline · ' + el.dataset.hairlineHost;
-    if (el.matches('.pillars > div')) return 'Pilar · ' + $('.num', el).textContent;
-    if (el.matches('.compare-wrap > div')) return 'Texto · ' + $('h3', el).textContent;
-    if (el.matches('.step')) return 'Etapa · ' + $('h3', el).textContent;
-    if (el.matches('.qa')) return 'Acordeão · Pergunta';
-    if (el.matches('h2')) return 'H2 · ' + el.textContent.trim().replace(/\s+/g,' ').slice(0, 26);
-    if (el.matches('p')) return 'P · Texto';
-    return 'Grupo · ' + (el.className.replace(/\b(build|built|media)\b/g,'').trim().split(/\s+/)[0] || 'Camada');
-  };
-  all.forEach(el => { el.classList.add('build'); el._label = label; if (el.matches(MEDIA)) el.classList.add('media'); });
-
-  // each section shows its own build progress on a ruler while the crew works in it
-  function progress(s){
-    if (!crewOn()) return;
-    if (!s.layer){ s.layer = document.createElement('div'); s.layer.className = 'ed-layer'; s.layer.innerHTML = '<div class="eruler"></div><span class="eprog"></span>'; s.sec.appendChild(s.layer); }
-    const n = s.items.filter(e => e.classList.contains('built')).length / s.items.length;
-    $('.eruler', s.layer).style.transform = `scaleX(${n})`;
-    $('.eprog', s.layer).textContent = n >= 1 ? '✓ Seção pronta' : `Construindo · ${Math.round(n*100)}%`;
-    s.layer.classList.add('active');
-    clearTimeout(s.t); s.t = setTimeout(() => s.layer && s.layer.classList.remove('active'), 1400);
-  }
-  isComplete = () => all.every(el => el.classList.contains('built')) && $$('header .build, .hero .build').every(el => el.classList.contains('built'));
-
-  let ticking = false;
-  function check(){
-    ticking = false;
-    if (all.every(el => el.classList.contains('built'))){ assign(); return; }
-    const line = innerHeight * .82;
-    // built once, the first time it is scrolled to, like the page loading; it never comes apart again
-    for (const el of all){
-      const r = el.getBoundingClientRect();
-      if (r.top < line && !el.classList.contains('built') && !el._q) enqueue(el, () => progress(el._s), true);
-    }
-    // everything that came into view is queued first, then the builder picks in order
-    assign();
-  }
-  addEventListener('scroll', () => { if (!ticking){ ticking = true; requestAnimationFrame(check); } }, {passive:true});
-  addEventListener('resize', check);
-  window.__sb = {
-    reset(){ queue.length = 0; all.forEach(el => { el._q = false; el.style.clipPath = ''; el.classList.remove('built', 'now'); }); secs.forEach(s => { if (s.layer){ s.layer.remove(); s.layer = null; } }); },
-    check,
-  };
-  check();
-}
+{{JS_PROJETOS}}
+{{JS_SCROLL}}
 })();
 </script>

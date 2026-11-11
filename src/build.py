@@ -30,11 +30,18 @@ HL_DIR = SRC / 'hairline'
 tpl = tpl.replace('{{HL_KERNEL}}', (HL_DIR / 'kernel.js').read_text())
 for n in ['montagem', 'bandeja', 'esteira']:
     tpl = tpl.replace('{{FIG_%s}}' % n.upper(), (HL_DIR / f'{n}.js').read_text())
+# o motor da equipe de cursores e a construção por rolagem: fonte única em src/
+tpl = tpl.replace('{{JS_PROJETOS}}', (SRC / 'projetos.js').read_text())
+tpl = tpl.replace('{{JS_CREW}}', (SRC / 'crew.js').read_text()).replace('{{JS_SCROLL}}', (SRC / 'crew_scroll.js').read_text())
 assert '{{' not in tpl, 'placeholder sem valor'
 
 full = ('<!doctype html>\n<html lang="pt-BR">\n<head>\n<meta charset="utf-8">\n'
         '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n' + tpl + '\n</html>\n')
 (SRC.parent / 'index.html').write_text(full)
+# as subpáginas dos formatos (sem a construção animada)
+import subpages; subpages.build()
+# as imagens dos projetos (src/projetos/ → assets/projetos/)
+import shutil; shutil.copytree(SRC / 'projetos', SRC.parent / 'assets' / 'projetos', dirs_exist_ok=True)
 if len(sys.argv) > 1:
     pathlib.Path(sys.argv[1]).write_text(tpl)
 print('ok', len(full) // 1024, 'KB')

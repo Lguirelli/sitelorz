@@ -102,7 +102,7 @@ h3,.h3{font:700 21px/1.25 var(--font-heading);letter-spacing:-.01em}
 .band-inverse .display em{color:var(--accent)}
 
 /* ---------- cursor flock ---------- */
-#crew{position:absolute;left:0;top:0;width:100%;height:100vh;pointer-events:none;z-index:60;overflow:hidden}
+#crew{position:absolute;left:0;top:0;width:100%;height:0;pointer-events:none;z-index:60;overflow:hidden}
 #crewFix{position:fixed;inset:0;pointer-events:none;z-index:61;overflow:hidden}
 #crew[hidden]+#crewFix{display:none}
 .wk{position:absolute;left:0;top:0;will-change:transform;transition:opacity .2s ease}
@@ -135,7 +135,8 @@ h3,.h3{font:700 21px/1.25 var(--font-heading);letter-spacing:-.01em}
 .wk-sel b{position:absolute;right:-1.5px;bottom:-20px;font:400 10px/1 var(--font-heading);background:var(--navy-900);color:var(--orange-300);padding:4px 6px;white-space:nowrap;font-variant-numeric:tabular-nums}
 
 /* ---------- intro ---------- */
-#intro{position:fixed;inset:0;background:var(--bg);z-index:50;display:grid;place-items:center;transition:opacity .6s ease}
+#intro{position:fixed;inset:0;background:var(--bg);z-index:50;display:none;place-items:center;transition:opacity .6s ease}
+.js #intro{display:grid}
 #intro .mark{width:64px;height:64px;filter:grayscale(1) opacity(.2);transition:filter .5s, transform .6s var(--ease)}
 #intro .mark.lit{filter:none;transform:scale(1.1)}
 #intro .bar{position:absolute;bottom:max(40px,env(safe-area-inset-bottom,0px));left:50%;width:160px;height:2px;background:var(--line);transform:translateX(-50%);overflow:hidden}
@@ -153,13 +154,13 @@ h3,.h3{font:700 21px/1.25 var(--font-heading);letter-spacing:-.01em}
 .guide.h{height:1px;left:0;right:0;transform:scaleX(0);transform-origin:left}
 .guide.v{width:1px;top:0;bottom:0;transform:scaleY(0);transform-origin:top}
 .guide.on{transform:none}
-.build{opacity:0}
-.build.built{opacity:1;animation:buildIn .45s ease}
-.build.built.now{animation:none}
+.js .build{opacity:0}
+.js .build.built{opacity:1;animation:buildIn .45s ease}
+.js .build.built.now{animation:none}
 @keyframes buildIn{from{opacity:0}}
-.media.build::after{content:"";position:absolute;inset:0;z-index:4;pointer-events:none;border-radius:inherit;
+.js .media.build::after{content:"";position:absolute;inset:0;z-index:4;pointer-events:none;border-radius:inherit;
   background:repeating-linear-gradient(45deg,var(--ph1) 0 10px,var(--ph2) 10px 20px);opacity:1;transition:opacity .35s ease .05s}
-.media.build.built::after{opacity:0}
+.js .media.build.built::after{opacity:0}
 .media.no-ph::after{display:none}
 .ed-layer{position:absolute;inset:0;pointer-events:none;z-index:6;opacity:0;transition:opacity .6s ease;overflow:hidden}
 .ed-layer.active{opacity:1}
@@ -202,6 +203,8 @@ header.open .menu-btn i:last-child{top:20px;transform:rotate(-45deg)}
 .hero-grid{position:relative;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:32px;align-items:center;min-height:min(720px,calc(100svh - 72px))}
 .hero-copy{position:relative;z-index:3;display:grid;gap:26px;justify-items:start}
 .hero h1{font-size:clamp(56px,8.6vw,132px)}
+/* one column (tablet and phone): the title fits two lines of the column, so "feito sob medida." stays together */
+@media (max-width:960px){.hero-copy{container-type:inline-size}.hero h1{font-size:min(clamp(56px,8.6vw,132px),14.4cqi)}}
 .proof{display:flex;flex-wrap:wrap;gap:10px}
 .ctas{display:flex;gap:14px;flex-wrap:wrap}
 .hero-art{position:relative;align-self:stretch;min-height:440px}
@@ -249,6 +252,17 @@ section{position:relative}
 .blk{border-radius:4px;background:var(--surface-hover)}
 .blk.ink{background:var(--line-strong)}.blk.red{background:var(--action)}.blk.orange{background:var(--accent)}
 .format:hover .pg{transform:translateY(-30%)}
+/* the button at the bottom says where the card goes; the whole card is its click area */
+.card-link{display:flex;align-items:center;justify-content:center;gap:10px;min-height:48px;margin-top:2px;padding:12px 20px;border-radius:99px;
+  background:var(--ic);color:var(--on-ic,var(--on-action));font:700 13px/1 var(--font-heading);letter-spacing:.06em;text-transform:uppercase;text-decoration:none;transition:background .2s}
+.card-link::after{content:"→";transition:translate .3s var(--ease)}
+.card-link::before{content:"";position:absolute;inset:0;z-index:5;border-radius:18px}
+.format:hover{border-color:var(--line-strong);background:var(--surface-hover)}
+/* no filter or transform here: either would shrink the card's click area to the button */
+.format:hover .card-link{background:color-mix(in srgb,var(--ic) 82%,var(--cream-50))}
+.format:hover .card-link::after{translate:4px 0}
+.card-link:focus-visible{outline:none}
+.format:has(.card-link:focus-visible){outline:2px solid var(--accent);outline-offset:3px}
 .pg-dash{grid-template-rows:auto 1fr auto;height:calc(100% - 22px);bottom:0}
 .format:hover .pg-dash{transform:none}
 .pg-dash .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
@@ -420,6 +434,134 @@ footer.site{border-top:1px solid var(--line);padding-block:32px}
 footer.site .wrap{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;font:400 14px/1.4 var(--font-heading);color:var(--muted)}
 footer.site .logo{width:76px;background:var(--muted)}
 
+/* ---------- principais projetos (isolado em .pj) ---------- */
+/* a dark stage in any theme: the project's capture, blown up and dimmed, sits behind the panels */
+.pj{position:relative;overflow:hidden;overflow:clip;isolation:isolate;background:var(--navy-950);color:var(--cream-200);
+  --ink:var(--cream-200);--muted:var(--cream-400);--line:rgba(250,228,207,.12);--line-strong:rgba(250,228,207,.28);--surface-hover:rgba(250,228,207,.07);
+  /* motion: panels travel with a strong ease-in-out; hover and arrivals use a strong ease-out (Emil Kowalski's curves) */
+  --pj-move:cubic-bezier(.77,0,.175,1);--pj-out:cubic-bezier(.23,1,.32,1);--pj-travel:520ms;--pj-hover:200ms}
+.pj .sec-head{grid-template-columns:minmax(0,1fr);margin-bottom:8px}
+.pj .sec-head p{max-width:58ch}
+.pj-bg{position:absolute;inset:0;z-index:-1;pointer-events:none;-webkit-mask:linear-gradient(transparent,#000 18%,#000 82%,transparent);mask:linear-gradient(transparent,#000 18%,#000 82%,transparent)}
+.pj-bg::after{content:"";position:absolute;inset:0;background:radial-gradient(70% 60% at 50% 58%,rgba(6,8,19,.3),rgba(6,8,19,.86))}
+.pj-bgimg{position:absolute;inset:-8%;width:116%;height:116%;object-fit:cover;filter:blur(30px) saturate(1.1) brightness(.5);opacity:0;transition:opacity 450ms ease}
+.pj-bgimg.on{opacity:1}
+.pj-stage{--sth:clamp(540px,72vh,720px);position:relative;display:flow-root;perspective:1500px;touch-action:pan-y;-webkit-user-select:none;user-select:none;outline:none}
+.pj-stage.grabbing,.pj-stage.grabbing *{cursor:grabbing!important}
+.pj-track{position:absolute;left:0;right:0;top:0;height:var(--sth);transform-style:preserve-3d;pointer-events:none;transition:translate 420ms var(--pj-out)}
+.pj-track.drag{transition:none}
+
+/* 1) the card: where it sits in the carousel (moves only when the project changes) */
+.pj-card{position:absolute;left:50%;top:calc(var(--sth) * .5);width:var(--pw,300px);height:var(--ph,480px);margin:calc(var(--ph,480px) / -2) 0 0 calc(var(--pw,300px) / -2);
+  cursor:pointer;will-change:transform;pointer-events:auto;
+  transform:translateX(calc(var(--x,0) * var(--pw,300px))) translateZ(var(--z,0px)) rotateY(var(--ry,0deg)) scale(var(--s,1));
+  transition:transform var(--pj-travel) var(--pj-move),opacity 300ms ease}
+.pj-card.on{cursor:default}
+/* 2) the lift: hover and keyboard focus raise this inner layer, so they never fight the travel above */
+.pj-lift{position:relative;width:100%;height:100%;border-radius:18px;overflow:hidden;background:var(--navy-900);box-shadow:0 0 0 1px var(--line);
+  transition:transform var(--pj-hover) var(--pj-out),box-shadow var(--pj-hover) ease}
+/* the deeper shadow is its own layer and only fades, so the lift stays on transform and opacity */
+.pj-card::before{content:"";position:absolute;inset:0;border-radius:18px;box-shadow:0 40px 80px -30px rgba(0,0,0,.75);pointer-events:none}
+.pj-card::after{content:"";position:absolute;inset:0;border-radius:18px;box-shadow:0 56px 90px -34px rgba(0,0,0,.9),0 0 46px -12px color-mix(in srgb,var(--accent) 35%,transparent);opacity:0;transition:opacity var(--pj-hover) ease;pointer-events:none}
+/* 3) the image: a slow, slight zoom that follows the lift, clipped by the card */
+.pj-lift img{display:block;width:100%;height:100%;object-fit:cover;object-position:top;pointer-events:none;transition:transform 280ms var(--pj-out)}
+/* depth shade of the side panels, the reading gradient of the active one, and the dim used when another card is hovered */
+.pj-lift::after{content:"";position:absolute;inset:0;background:var(--navy-950);opacity:var(--sh,0);transition:opacity var(--pj-travel) var(--pj-move);pointer-events:none}
+.pj-lift::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(rgba(6,8,19,0) 30%,rgba(6,8,19,.9) 52%,rgba(6,8,19,.97) 70%);opacity:0;transition:opacity 400ms ease;pointer-events:none}
+.pj-card.on .pj-lift::before{opacity:1}
+.pj-card.side .pj-lift::before{opacity:.55}
+.pj-dim{position:absolute;inset:0;z-index:2;background:var(--navy-950);opacity:0;transition:opacity var(--pj-hover) ease;pointer-events:none}
+/* side panels: name and type rise in on hover (category first, then the name) */
+.pj-peek{position:absolute;left:16px;bottom:16px;z-index:3;display:grid;justify-items:start;gap:6px;max-width:calc(100% - 32px);padding:12px 14px;border-radius:12px;pointer-events:none;
+  background:rgba(6,8,19,.78);box-shadow:inset 0 0 0 1px var(--line-strong);opacity:0;transition:opacity 120ms ease}
+/* right of the centre the label goes to the top, clear of the active project's text */
+.pj-card.right .pj-peek{left:auto;right:16px;bottom:auto;top:16px;justify-items:end;text-align:right}
+.pj-peek > *{opacity:0;transform:translateY(8px);transition:opacity 120ms ease,transform 120ms var(--pj-out)}
+.pj-peek-cat{font:700 11px/1.3 var(--font-heading);letter-spacing:.14em;text-transform:uppercase;color:var(--orange-300)}
+.pj-peek-name{font:400 clamp(22px,2vw,30px)/.95 var(--font-display);text-transform:uppercase;color:var(--cream-50);text-shadow:0 2px 18px rgba(0,0,0,.7)}
+.pj-card.on .pj-peek{display:none}
+@media (hover:hover) and (pointer:fine){
+  .pj-stage:not(.grabbing) .pj-card:hover .pj-lift{transform:translateY(-8px) scale(1.02);box-shadow:0 0 0 1px var(--line-strong)}
+  .pj-stage:not(.grabbing) .pj-card:hover::after{opacity:1}
+  .pj-stage:not(.grabbing) .pj-card:hover img{transform:scale(1.045)}
+  .pj-stage:not(.grabbing) .pj-card.side:hover .pj-peek{opacity:1;transition-duration:180ms}
+  .pj-stage:not(.grabbing) .pj-card.side:hover .pj-peek > *{opacity:1;transform:none;transition-duration:220ms}
+  .pj-stage:not(.grabbing) .pj-card.side:hover .pj-peek-name{transition-delay:40ms}
+  /* the others step back a little; the caption of the active project is a separate layer and stays bright */
+  .pj-stage:not(.grabbing) .pj-track:has(.pj-card:hover) .pj-card:not(:hover) .pj-dim{opacity:.22}
+}
+.pj-arrow:active,.pj-card.side:active .pj-lift{transform:scale(.97)}
+/* keyboard: the same lift on the active card, with a visible ring, while the carousel has focus */
+.pj-stage:focus-visible .pj-card.on .pj-lift{transform:translateY(-8px) scale(1.02);outline:2px solid var(--accent);outline-offset:4px}
+.pj-stage:focus-visible .pj-card.on::after{opacity:1}
+.pj-stage:focus-visible .pj-card.on img{transform:scale(1.045)}
+.pj-stage:focus-visible .pj-card:not(.on) .pj-dim{opacity:.22}
+
+/* the caption of the active project: the old one leaves fast, the new one arrives just behind the panels, line by line */
+.pj-caption{position:absolute;z-index:30;left:calc(50% - var(--pw,300px) / 2 + 28px);top:calc(var(--sth) * .5 + var(--ph,480px) * .14);width:calc(var(--pw,300px) * 1.1);display:grid;pointer-events:none}
+.pj-cap{grid-area:1/1;align-self:start}
+.pj-cap a{pointer-events:auto}
+.pj-cap > *{transition:opacity 240ms ease-out,transform 240ms var(--pj-out)}
+.pj-cap.in > *{transition-delay:calc(140ms + var(--i,0) * 40ms)}
+@starting-style{.pj-cap.in > *{opacity:0;transform:translateY(14px)}}
+.pj-cap.out > *{opacity:0;transform:translateY(-8px);transition-duration:150ms;transition-delay:0ms}
+.pj-cap.out{pointer-events:none}
+.pj-meta{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;margin-bottom:12px}
+.pj-cat{font:700 12px/1.3 var(--font-heading);letter-spacing:.14em;text-transform:uppercase;color:var(--orange-300);text-shadow:0 1px 10px rgba(0,0,0,.6)}
+.pj-flag{padding:6px 10px;border-radius:99px;background:rgba(6,8,19,.72);box-shadow:inset 0 0 0 1px var(--line-strong);font:700 10px/1 var(--font-heading);letter-spacing:.12em;text-transform:uppercase;color:var(--cream-50)}
+.pj-name{font:400 clamp(30px,3.4vw,52px)/.92 var(--font-display);letter-spacing:.01em;text-transform:uppercase;color:var(--cream-50);text-shadow:0 2px 28px rgba(0,0,0,.6);text-wrap:balance}
+.pj-rule{display:block;width:44px;height:2px;margin:16px 0 14px;background:var(--accent)}
+/* the explanation, below the carousel: context on the left, what each feature does on the right */
+.pj-detail{position:relative;display:grid;width:min(100% - 64px,1080px);margin:calc(var(--sth) + 8px) auto 0;-webkit-user-select:text;user-select:text}
+.pj-detail .pj-cap{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:18px 56px;align-items:start;padding-top:26px;border-top:1px solid var(--line)}
+.pj-desc{font-size:20px;line-height:1.45;color:var(--cream-50);text-wrap:pretty}
+.pj-feats{list-style:none;display:grid;gap:10px}
+.pj-feats li{position:relative;padding-left:18px;font:400 17px/1.45 var(--font-body);color:var(--cream-200);text-wrap:pretty}
+.pj-feats li::before{content:"";position:absolute;left:0;top:.62em;width:6px;height:6px;border-radius:50%;background:var(--accent)}
+.pj-open{grid-column:2;justify-self:start}
+.pj .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.pj-ctrl{display:contents}
+/* arrows: the header's round buttons, at the sides */
+.pj-arrow{position:absolute;top:calc(var(--sth) * .5);z-index:40;width:52px;height:52px;margin-top:-26px;display:grid;place-items:center;border:0;border-radius:50%;cursor:pointer;
+  background:rgba(6,8,19,.4);color:var(--cream-50);box-shadow:inset 0 0 0 1px var(--line);transition:background 200ms ease,transform 160ms var(--pj-out)}
+.pj-arrow:hover{background:color-mix(in srgb,var(--accent) 24%,rgba(6,8,19,.5))}
+.pj-arrow:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.pj-arrow svg{width:20px;height:20px}
+.pj-arrow.prev{left:max(16px,calc(50% - 620px))}
+.pj-arrow.next{right:max(16px,calc(50% - 620px))}
+.pj-count{position:absolute;left:50%;top:calc(var(--sth) - 30px);translate:-50% 0;z-index:40;display:flex;align-items:center;gap:12px;font:700 12px/1 var(--font-heading);letter-spacing:.14em;color:var(--cream-400);font-variant-numeric:tabular-nums}
+.pj-now{color:var(--cream-50)}
+.pj-bar{width:72px;height:2px;background:var(--line-strong);overflow:hidden}
+.pj-bar i{display:block;height:100%;background:var(--accent);transform-origin:left;transform:scaleX(0);transition:transform var(--pj-travel) var(--pj-move)}
+.pj-probe{position:absolute!important;left:0;right:0;visibility:hidden;pointer-events:none}
+/* small screens: one neighbour peeks on each side; the text and the controls sit below the panel, always visible */
+@media (max-width:899px){
+  .pj-stage{height:auto;padding-bottom:4px}
+  .pj-track{position:relative;top:auto;height:calc(var(--ph,420px) + 48px)}
+  .pj-card{top:50%}
+  .pj-lift,.pj-card::before,.pj-card::after{border-radius:16px}
+  .pj-lift::before,.pj-peek{display:none}
+  .pj-caption{position:relative;left:auto;top:auto;width:min(100% - 32px,560px);margin:14px auto 0}
+  .pj-name{font-size:clamp(38px,11vw,56px)}
+  .pj-detail{width:min(100% - 32px,560px);margin:12px auto 0}
+  .pj-detail .pj-cap{grid-template-columns:minmax(0,1fr);gap:14px;padding-top:0;border-top:0}
+  .pj-desc{font-size:18px}
+  .pj-feats li{font-size:16px}
+  .pj-open{grid-column:auto}
+  .pj-ctrl{display:flex;align-items:center;justify-content:space-between;gap:16px;width:min(100% - 32px,560px);margin:22px auto 0}
+  .pj-arrow,.pj-count{position:static;margin:0;translate:none}
+  .pj-arrow{background:var(--surface-hover)}
+}
+/* reduced motion: nothing travels, lifts or zooms; projects and text change with a short fade */
+@media (prefers-reduced-motion:reduce){
+  .pj-card{transition:opacity 200ms ease}
+  .pj-lift,.pj-lift img,.pj-track,.pj-bar i,.pj-lift::after{transition:none}
+  .pj .pj-card:hover .pj-lift,.pj-stage:focus-visible .pj-card.on .pj-lift,.pj .pj-card:hover img,.pj-stage:focus-visible .pj-card.on img,.pj-arrow:active,.pj-card.side:active .pj-lift{transform:none!important}
+  .pj-peek > *,.pj-cap > *{transform:none!important;transition:opacity 200ms ease!important;transition-delay:0ms!important}
+  @starting-style{.pj-cap.in > *{transform:none}}
+  .pj-bgimg{transition:opacity 200ms ease}
+}
+
 /* ---------- responsive ---------- */
 @media (max-width:960px){
   /* the links move into a dropdown under the header */
@@ -471,6 +613,8 @@ footer.site .logo{width:76px;background:var(--muted)}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="i-replay" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 12a8.5 8.5 0 1 0 2.8-6.3L3.5 8.2"/><path d="M3.5 3.5v4.7h4.7"/><path d="M10.2 9.2l4.6 2.8-4.6 2.8z" fill="currentColor"/></symbol><symbol id="i-layout" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 9h18M9 9v11"/></symbol><symbol id="i-cursor" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3l5.6 15 2.1-6.2L19 9.6z"/><path d="M13 13l5 5"/></symbol><symbol id="i-devices" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="14" height="10" rx="2"/><path d="M6 19h6"/><rect x="17.5" y="8" width="4.5" height="11" rx="1.5"/></symbol><symbol id="i-pages" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="3" width="13" height="16" rx="2"/><path d="M4 7v12a2 2 0 0 0 2 2h10M10.5 8h6M10.5 12h6"/></symbol><symbol id="i-compass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></symbol><symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/></symbol><symbol id="i-article" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h10l4 4v12H5z"/><path d="M14 4v5h5M8 13h8M8 17h5"/></symbol><symbol id="i-loop" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 0 1 14-5.3M20 12a8 8 0 0 1-14 5.3"/><path d="M18 3v4h-4M6 21v-4h4"/></symbol><symbol id="i-growth" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16"/><path d="M5 16l5-5 3 3 6-7"/><path d="M15 7h4v4"/></symbol><symbol id="i-inbox" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13l3-8h12l3 8v6H3z"/><path d="M3 13h5l1.5 2.5h5L16 13h5"/></symbol><symbol id="i-send" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 3L10 14"/><path d="M21 3l-7 18-4-7-7-4z"/></symbol><symbol id="i-plug" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 7V3M15 7V3M7 7h10v4a5 5 0 0 1-10 0zM12 16v5"/></symbol><symbol id="i-database" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v12c0 1.7 3.1 3 7 3s7-1.3 7-3V6M5 12c0 1.7 3.1 3 7 3s7-1.3 7-3"/></symbol><symbol id="i-users" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 7M18 14.6a6.5 6.5 0 0 1 3.5 5.4"/></symbol><symbol id="i-blocks" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/><rect x="8" y="3" width="8" height="8" rx="1.5"/></symbol><symbol id="i-chart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18M6 20v-8M11 20V5M16 20v-6M21 20V9"/></symbol><symbol id="i-report" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6v18h12V7z"/><path d="M14 3v4h4M9.2 14.5a3 3 0 0 0 5.4 1.5M14.8 12.5a3 3 0 0 0-5.4-1.5"/></symbol><symbol id="i-target" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2"/></symbol></svg>
+<script>/* marks that scripting works; if this page's script fails, everything is shown as plain content */
+(function(d){ d.classList.add('js'); addEventListener('error', function(e){ if (e.error && (!e.filename || e.filename === location.href)){ d.classList.remove('js'); document.body.classList.remove('locked'); } }); })(document.documentElement);</script>
 <div id="crew" aria-hidden="true"></div>
 <div id="intro" aria-hidden="true">
   <img class="mark" alt="" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTIiIGZpbGw9IiNCQjIyMzMiLz48cGF0aCBkPSJNMjAgMTRoMTB2MzRoMTd2MTBIMjB6IiBmaWxsPSIjRkFFNENGIi8+PC9zdmc+Cg==">
@@ -532,29 +676,32 @@ footer.site .logo{width:76px;background:var(--muted)}
       <div class="fig media" data-hairline-host="bandeja" data-label-a11y="Ilustração: as páginas de um site numa bandeja; a página sob o ponteiro se ergue."><p class="hl-read" data-hairline-read aria-live="polite"></p></div>
     </div>
     <div class="grid3">
-      <article class="tile format" style="--ic:var(--action)">
+      <article class="tile format" style="--ic:var(--action);--on-ic:var(--cream-50)">
         <div class="browser" aria-hidden="true"><div class="bar"><i></i><i></i><i></i></div>
           <div class="pg"><div class="blk ink" style="height:10px;width:40%"></div><div class="blk red" style="height:46px"></div><div class="blk" style="height:8px;width:80%"></div><div class="blk" style="height:8px;width:65%"></div><div class="blk orange" style="height:16px;width:36%"></div><div class="blk" style="height:40px"></div><div class="blk" style="height:40px"></div><div class="blk ink" style="height:30px"></div><div class="blk red" style="height:16px;width:40%"></div></div></div>
         <h3>Landing Page</h3>
         <p>Uma página só, com o essencial, que leva a pessoa até a ação: pedir orçamento, chamar no WhatsApp ou preencher um formulário.</p>
         <ul><li><span class="li-ico"><svg aria-hidden="true"><use href="#i-layout"/></svg></span><span>Seções definidas conforme o objetivo</span></li><li><span class="li-ico"><svg aria-hidden="true"><use href="#i-cursor"/></svg></span><span>Chamadas para ação e caminhos de contato</span></li><li><span class="li-ico"><svg aria-hidden="true"><use href="#i-devices"/></svg></span><span>Layout responsivo e navegação clara</span></li></ul>
         <footer><span>Sob proposta</span><span class="muted">Ideal para campanhas</span></footer>
+        <a class="card-link" href="landing-page.html" aria-label="Ver escopo e exemplos: Landing Page">Ver escopo e exemplos</a>
       </article>
-      <article class="tile format" style="--ic:var(--accent)">
+      <article class="tile format" style="--ic:var(--accent);--on-ic:var(--navy-950)">
         <div class="browser" aria-hidden="true"><div class="bar"><i></i><i></i><i></i></div>
           <div class="pg"><div style="display:flex;gap:6px"><div class="blk ink" style="height:10px;width:24%"></div><div class="blk" style="height:10px;flex:1"></div></div><div class="blk orange" style="height:50px"></div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px"><div class="blk" style="height:34px"></div><div class="blk red" style="height:34px"></div><div class="blk" style="height:34px"></div></div><div class="blk" style="height:8px;width:70%"></div><div class="blk" style="height:44px"></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px"><div class="blk ink" style="height:40px"></div><div class="blk" style="height:40px"></div></div></div></div>
         <h3>Site Completo</h3>
         <p>Páginas para serviços, história, diferenciais e contato, organizadas para quem chega pelo Google, por indicação ou pelas redes.</p>
         <ul><li><span class="li-ico"><svg aria-hidden="true"><use href="#i-pages"/></svg></span><span>Estrutura de páginas definida no briefing</span></li><li><span class="li-ico"><svg aria-hidden="true"><use href="#i-compass"/></svg></span><span>Conteúdo e navegação tratados juntos</span></li><li><span class="li-ico"><svg aria-hidden="true"><use href="#i-search"/></svg></span><span>Configurações básicas de indexação</span></li></ul>
         <footer><span>Sob proposta</span><span class="muted">Ideal para institucionais</span></footer>
+        <a class="card-link" href="site-completo.html" aria-label="Ver escopo e exemplos: Site Completo">Ver escopo e exemplos</a>
       </article>
-      <article class="tile format" style="--ic:var(--red-400)">
+      <article class="tile format" style="--ic:var(--red-400);--on-ic:var(--navy-950)">
         <div class="browser" aria-hidden="true"><div class="bar"><i></i><i></i><i></i></div>
           <div class="pg pg-dash"><div class="kpis"><div class="blk orange"></div><div class="blk red"></div><div class="blk ink"></div></div><div class="bars"><i style="height:38%"></i><i style="height:62%"></i><i class="r" style="height:48%"></i><i style="height:78%"></i><i style="height:66%"></i><i class="r" style="height:92%"></i></div><div class="flow"><b></b><span></span><b class="o"></b><span></span><b class="r"></b></div></div></div>
         <h3>Soluções Personalizadas</h3>
         <p>Para quando o site precisa se ligar ao dia a dia da empresa: contatos que viram pedidos organizados, integração com planilhas e CRMs, painéis de acompanhamento.</p>
         <ul><li><span class="li-ico"><svg aria-hidden="true"><use href="#i-loop"/></svg></span><span>Automações que acabam com tarefas repetidas</span></li><li><span class="li-ico"><svg aria-hidden="true"><use href="#i-database"/></svg></span><span>Sistemas internos feitos para a sua equipe</span></li><li><span class="li-ico"><svg aria-hidden="true"><use href="#i-chart"/></svg></span><span>Painéis para acompanhar o negócio</span></li></ul>
         <footer><span>Sob proposta</span><span class="muted">Ideal para rotinas e processos</span></footer>
+        <a class="card-link" href="solucoes-personalizadas.html" aria-label="Ver escopo e exemplos: Soluções Personalizadas">Ver escopo e exemplos</a>
       </article>
     </div>
     <div class="pillars">
@@ -615,6 +762,29 @@ footer.site .logo{width:76px;background:var(--muted)}
         </div>
         <div class="handle" id="handle"></div>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRINCIPAIS PROJETOS (dados em src/projetos.js) -->
+<section class="sec pj" id="projetos" aria-labelledby="pjTitle">
+  <div class="pj-bg" aria-hidden="true"></div>
+  <div class="wrap">
+    <div class="sec-head pj-head">
+      <div>
+        <h2 class="display" id="pjTitle">Principais <em>projetos</em>.</h2>
+        <p>Três projetos recentes e o que cada um resolve: reservas pelo WhatsApp, pedido online e orientação antes do primeiro contato.</p>
+      </div>
+    </div>
+  </div>
+  <div class="pj-stage" role="region" aria-roledescription="carrossel" aria-label="Principais projetos. Use as setas do teclado para trocar de projeto." tabindex="0">
+    <div class="pj-track"></div>
+    <div class="pj-caption" aria-live="polite"></div>
+    <div class="pj-detail" aria-live="polite"></div>
+    <div class="pj-ctrl">
+      <button class="pj-arrow prev" type="button" aria-label="Projeto anterior"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+      <p class="pj-count" aria-hidden="true"><span class="pj-now">01</span><span class="pj-bar"><i></i></span><span class="pj-total">06</span></p>
+      <button class="pj-arrow next" type="button" aria-label="Próximo projeto"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button>
     </div>
   </div>
 </section>
@@ -1888,8 +2058,6 @@ document.body.classList.add('locked');
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const $ = (s, r=document) => r.querySelector(s);
 const $$ = (s, r=document) => [...r.querySelectorAll(s)];
-const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
-const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 
 /* ========== 1) the crew: cursors that build the page ========== */
 // Like a shared design file: several cursors, each with a colour and a name, work in parallel.
@@ -1911,14 +2079,14 @@ CUR.move = '<svg viewBox="0 0 22 22"><path d="M11 2v18M2 11h18M11 2l-3 3M11 2l3 
 CUR.copy = CUR.arrow.replace('</svg>', '<circle cx="16.5" cy="17" r="5" fill="var(--wc)" stroke="var(--navy-950)" stroke-width="1.4"/><path d="M16.5 14.5v5M14 17h5" stroke="var(--wi)" stroke-width="1.6" stroke-linecap="round"/></svg>');
 CUR.resize = '<svg viewBox="0 0 22 22"><path d="M4 4l14 14M4 4v6M4 4h6M18 18v-6M18 18h-6" stroke="var(--navy-950)" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 4l14 14M4 4v6M4 4h6M18 18v-6M18 18h-6" stroke="var(--wc)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const HOT = { arrow: [3, 2], cross: [11, 11], text: [11, 11], move: [11, 11], copy: [3, 2], resize: [11, 11] };
-const VERB = { text: 'Digitar', cross: 'Desenhar', move: 'Mover', copy: 'Copiar', resize: 'Redimensionar', arrow: 'Posicionar' };
+const VERB = { move: 'Mover', resize: 'Redimensionar' };
 const TEAM = [['Design','--orange-500','--navy-950','draw'],['Front','--red-400','--navy-950','resize'],['Dev','--cream-200','--navy-950','move'],['UX','--orange-700','--cream-50','copy'],['Conteúdo','--red-600','--cream-50','type'],['Redação','--orange-300','--navy-950','type']];
 // how each part gets built: typed, drawn as a box, copied from the one before it, resized from small, or moved into place
 const sameKind = (a, b) => a && b && a.classList.contains('build') && a.tagName === b.tagName && a.classList[0] === b.classList[0];
 const kindOf = (el) => {
   if (el.matches('h1,h2,p,.lede,.compare-wrap > div:first-child')) return 'text';
   if (el.matches('.format,.sol,.pillars > div,.step,.qa,.needs') && sameKind(el.previousElementSibling, el)) return 'copy';
-  if (el.matches('.fig,.retrato,.compare,.scope-preview,form')) return 'resize';
+  if (el.matches('.fig,.retrato,.compare,.scope-preview,.pj-stage,form')) return 'resize';
   if (el.matches('.format,.sol,.pillars > div,.step')) return 'cross';
   return 'move';
 };
@@ -1926,7 +2094,9 @@ const nameOf = (el) => el.dataset.label || (el._label ? el._label(el) : 'Camada'
 
 // the text blocks inside a part, typed one after another once its space exists
 const TEXTS = 'h3,h4,p,li > span:last-child,footer > span,.num,legend,.needs label > span,.label,.pv-sum strong';
-const SKIP = 'svg,script,style,textarea,select,option,.hl-read,.ans,.compare';
+const SKIP = 'svg,script,style,textarea,select,option,.hl-read,.ans,.compare,.pj-stage';
+// running text is typed as a whole and never split into boxes: a box could send a lone full stop to the next line
+const WHOLE = 'h1,h2,h3,h4,p';
 function textsIn(el){
   const ok = (t) => !t.closest(SKIP) && (t.textContent || '').trim();
   let blocks = [...el.querySelectorAll(TEXTS)].filter(t => t.offsetWidth && t.getClientRects().length && ok(t));
@@ -1935,7 +2105,7 @@ function textsIn(el){
     // loose text (a button's label, a link, a tag) gets its own span so it can be typed without hiding its box
     el._wrapped = true;
     const walk = document.createTreeWalker(el, NodeFilter.SHOW_TEXT), nodes = [];
-    while (walk.nextNode()){ const n = walk.currentNode, p = n.parentElement; if (n.nodeValue.trim() && !p.closest(SKIP) && !blocks.some(b => b.contains(p)) && !p.classList.contains('tw')) nodes.push(n); }
+    while (walk.nextNode()){ const n = walk.currentNode, p = n.parentElement; if (n.nodeValue.trim() && !p.closest(SKIP) && !p.closest(WHOLE) && !blocks.some(b => b.contains(p)) && !p.classList.contains('tw')) nodes.push(n); }
     nodes.forEach(n => {
       const m = n.nodeValue.match(/^(\s*)([\s\S]*?)(\s*)$/), span = document.createElement('span');
       span.className = 'tw'; span.textContent = m[2];
@@ -1949,7 +2119,6 @@ function textsIn(el){
   return [...blocks, ...loose].sort((a, b) => (a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1));
 }
 const hideText = (t) => { t.style.clipPath = 'inset(-6px 100% -6px -6px)'; };
-const showText = (t, f) => { t.style.clipPath = f >= 1 ? '' : `inset(-6px ${(1 - f) * 100}% -6px -6px)`; };
 const groupOf = (el) => el.closest('main > section') || 'top';
 const clampN = (v, a, b) => Math.max(a, Math.min(b, v));
 
@@ -1960,14 +2129,17 @@ const workers = TEAM.map(([name, c, i, role]) => {
   sel.innerHTML = '<i></i><i></i><i></i><i></i><span></span><b></b>';
   const car = document.createElement('i'); car.className = 'wk-caret'; car.style.cssText = root.style.cssText;
   crewEl.append(sel, car, root);
-  return { name, role, root, sel, car, cur: $('.wk-cur', root), kind: '', x: 0, y: 0, born: false, state: 'rest', task: null, pi: 0, t0: 0, dur: 0, from: [0, 0], hop: 0 };
+  return { name, role, root, sel, car, cur: $('.wk-cur', root), tag: $('span', sel), dim: $('b', sel), kind: '', fix: false, x: 0, y: 0, born: false, state: 'rest', task: null, pi: 0, t0: 0, dur: 0, from: [0, 0], hop: 0 };
 });
 function setKind(w, k){ if (w.kind !== k){ w.kind = k; w.cur.innerHTML = CUR[k]; w.root.style.setProperty('--hx', HOT[k][0]); w.root.style.setProperty('--hy', HOT[k][1]); } }
 function click(w){ w.root.classList.remove('click'); void w.root.offsetWidth; w.root.classList.add('click'); }
 // everything the crew draws lives in page coordinates, so it scrolls with the content (no frame of lag)
 const pg = (x, y) => `translate(${x + scrollX}px,${y + scrollY}px)`;
 // parts in the sticky header stay put on screen: while a cursor works there, its marks live in a fixed layer
-const crewFix = document.createElement('div'); crewFix.id = 'crewFix'; crewEl.after(crewFix);
+const crewFix = document.createElement('div'); crewFix.id = 'crewFix'; crewFix.setAttribute('aria-hidden', 'true'); crewEl.after(crewFix);
+const hdrEl = $('#hdr');
+// the crew's layer is as tall as the content (the body), so it never stretches the page itself
+new ResizeObserver(() => { crewEl.style.height = document.body.offsetHeight + 'px'; }).observe(document.body);
 const stuck = (el) => !!el.closest('header');
 const pw = (w, x, y) => w.fix ? `translate(${x}px,${y}px)` : pg(x, y);
 function layer(w, fix){ if (w.fix === fix) return; w.fix = fix; (fix ? crewFix : crewEl).append(w.sel, w.car, w.root); }
@@ -1979,15 +2151,18 @@ function pose(el, dx, dy, s){ el._op = { dx, dy, s }; el.style.translate = `${dx
 function unpose(el){ el._op = null; el.style.translate = ''; el.style.scale = ''; el.style.transformOrigin = ''; }
 function drawSel(w, r, fx = 1, fy = 1){
   // the name tag never hides: under the sticky header it moves inside the box, just below the header; at the top edge it goes under the box
-  const tag = $('span', w.sel), hb = w.fix ? 0 : $('#hdr').getBoundingClientRect().bottom, inside = !w.fix && r.top - 26 < hb, under = w.fix && r.top < 26;
+  const hb = w.fix ? 0 : hdrEl.getBoundingClientRect().bottom, inside = !w.fix && r.top - 26 < hb, under = w.fix && r.top < 26;
   w.sel.classList.toggle('in', inside); w.sel.classList.toggle('under', under);
-  tag.style.top = inside ? Math.max(4, hb - r.top + 18) + 'px' : '';
+  w.tag.style.top = inside ? Math.max(4, hb - r.top + 18) + 'px' : '';
   Object.assign(w.sel.style, { transform: pw(w, r.left - 4, r.top - 4), width: r.width*fx + 8 + 'px', height: r.height*fy + 8 + 'px' });
-  $('b', w.sel).textContent = Math.round(r.width*fx) + ' × ' + Math.round(r.height*fy);
+  const size = Math.round(r.width*fx) + ' × ' + Math.round(r.height*fy);
+  if (w.size !== size) w.dim.textContent = w.size = size;
 }
 // a part the crew builds appears at once (its fade is only for parts finished off screen)
 function show(el){ el.classList.add('now', 'built'); }
-function label(w, verb, el){ $('span', w.sel).textContent = verb + ' · ' + nameOf(el); }
+function label(w, verb, el){ w.tag.textContent = verb + ' · ' + nameOf(el); }
+// a cursor with nothing to do: out of sight, marks off
+function rest(w){ w.task = null; w.state = 'rest'; w.root.classList.add('off'); w.sel.classList.remove('on', 'ph'); w.car.classList.remove('on'); }
 
 /* The steps that build one part. Each step says where the cursor starts (aim), how long it takes,
    and what one frame of it looks like; steps run one after another, never two at once. */
@@ -2028,14 +2203,9 @@ function typeStep(w, el, block, wholeSel, first = true){
       drawSel(w, wholeSel ? el.getBoundingClientRect() : r);
       return start();
     },
-    end: () => { showText(block, 1); caret(w, 0, 0, 0, false); } };
+    end: () => { block.style.clipPath = ''; caret(w, 0, 0, 0, false); } };
 }
-// edit a text in place: click it, select the old words, type the new ones over them
-function caretAtEnd(block){
-  const n = block.firstChild, rg = document.createRange();
-  if (n && n.nodeType === 3){ rg.setStart(n, n.length); rg.collapse(true); const r = rg.getClientRects()[0] || rg.getBoundingClientRect(); if (r && (r.height || r.left)) return r; }
-  const b = block.getBoundingClientRect(); return { left: b.left, top: b.top, height: b.height };
-}
+// edit a text in place: click where the change starts, select the old words, type the new ones over them
 const esc = (t) => t.replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
 // the shared start and end of two texts, cut at word boundaries
 function sameEnds(a, b){
@@ -2107,7 +2277,7 @@ function plan(w, task){
       end: () => { w.sel.classList.remove('ph'); textsIn(el).forEach(hideText); show(el); later(task); } });
   } else if (kind === 'copy'){
     const src = el.previousElementSibling;
-    let ghost = null, gTexts = [];
+    let ghost = null;
     steps.push({ cur: 'copy', dur: 520 * pace,
       aim: () => { const r = src.getBoundingClientRect(); return at(r, .5, .5); },
       begin: () => {
@@ -2116,6 +2286,7 @@ function plan(w, task){
         ghost = task.ghost = src.cloneNode(true);
         ghost.querySelectorAll('[id]').forEach(n => n.removeAttribute('id')); ghost.removeAttribute('id');
         ghost.setAttribute('aria-hidden', 'true'); ghost.classList.add('now', 'built');
+        ghost.querySelectorAll('a,button,input,select,textarea').forEach(n => { n.tabIndex = -1; });
         const shut = ghost.hasAttribute('data-open'); if (shut) ghost.removeAttribute('data-open');
         Object.assign(ghost.style, { position: 'absolute', left: '0', top: '0', visibility: 'hidden', margin: '0', width: r.width + 'px', height: r.height + 'px', translate: 'none', transition: 'none', zIndex: '55', pointerEvents: 'none', clipPath: '' });
         ghost.classList.add('wk-lift');
@@ -2198,18 +2369,16 @@ function enqueue(el, done, defer){
 const kOf = (t) => t.kind || kindOf(t.el);
 const RANK = { cross: 0, resize: 0, move: 0, copy: 1, text: 2, inside: 2 };
 const ROLE = { cross: 'draw', resize: 'resize', move: 'move', copy: 'copy', text: 'type', inside: 'type' };
-const groupIndex = (el) => { const g = groupOf(el); return g === 'top' ? -1 : [...document.querySelectorAll('main > section')].indexOf(g); };
+const SECTIONS = $$('main > section');
+const groupIndex = (el) => SECTIONS.indexOf(groupOf(el));   // the header ('top') is -1: it comes first
 const structurePending = (g, except) => queue.some(t => t !== except && groupOf(t.el) === g && RANK[kOf(t)] === 0) || workers.some(w => w.task && groupOf(w.task.el) === g && RANK[w.task.kind] === 0);
 const taskReady = (t) => { const k = kOf(t); return k === 'copy' ? !!t.el.previousElementSibling._done : k === 'text' ? !structurePending(groupOf(t.el), t) : true; };
 const before = (a, b) => groupIndex(a.el) - groupIndex(b.el) || RANK[kOf(a)] - RANK[kOf(b)] || (a.el.compareDocumentPosition(b.el) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1);
 let crewHold = true;
 function assign(){
   // parts already scrolled past (or with the animations off) are simply finished
-  for (let guard = 0; guard < 400; guard++){
-    const t = queue.find(t => { const r = t.el.getBoundingClientRect(); return !crewOn() || !r.width || r.bottom < -40 || r.top > innerHeight + 240 || getComputedStyle(t.el).visibility === 'hidden'; });
-    if (!t) break;
-    queue.splice(queue.indexOf(t), 1); finish(t);
-  }
+  const on = crewOn(), skip = (t) => { if (!on) return true; const r = t.el.getBoundingClientRect(); return !r.width || r.bottom < -40 || r.top > innerHeight + 240 || getComputedStyle(t.el).visibility === 'hidden'; };
+  for (let i = 0; i < queue.length; ){ if (skip(queue[i])) finish(queue.splice(i, 1)[0]); else i++; }   // finish() may queue the part's text: it is visited too
   if (crewHold && crewOn()){ return; }
   for (const w of workers){
     if (w.state !== 'rest') continue;
@@ -2227,10 +2396,13 @@ function assign(){
     { const [hx, hy] = HOT[w.kind || 'arrow']; w.root.style.transform = pw(w, w.x - hx, w.y - hy); }
     w.root.classList.remove('off');
     plan(w, task);
-    if (!task.steps.length){ w.state = 'rest'; w.root.classList.add('off'); finish(task); return assign(); }
+    if (!task.steps.length){ rest(w); finish(task); return assign(); }
     hopTo(w, performance.now());
   }
-  if (!queue.length && workers.every(w => w.state === 'rest') && isComplete()){ workers.forEach(w => { w.born = false; }); }
+  if (!queue.length && workers.every(w => w.state === 'rest') && isComplete()){
+    workers.forEach(w => { w.born = false; });
+    if (ANIM.force){ ANIM.force = false; crewEl.hidden = !crewOn(); }
+  }
   if (crewOn() && !raf) raf = requestAnimationFrame(tick);
 }
 function moveFrom(el, H){
@@ -2250,14 +2422,15 @@ function moveFrom(el, H){
 function hopTo(w, now){
   const s = w.task.steps[w.pi]; setKind(w, s.cur);
   const [tx, ty] = s.aim(), d = Math.hypot(tx - w.x, ty - w.y);
-  if (d < 1) { w.x += 0.01; }
   w.state = 'hop'; w.t0 = now; w.from = [w.x, w.y]; w.hop = Math.min(70, d * .25);
   w.dur = clampN(d * .4, d < 140 ? 60 : 110, 380) * pace;
 }
+// the crew moves at 30 frames per second, whatever the screen's refresh rate
+const FRAME = 1000 / 30; let lastFrame = 0;
 function tick(now){
   raf = 0;
-  const docH = document.documentElement.scrollHeight;
-  if (crewEl._h !== docH){ crewEl._h = docH; crewEl.style.height = docH + 'px'; }
+  if (now - lastFrame < FRAME - 1){ raf = requestAnimationFrame(tick); return; }
+  lastFrame = now;
   let busy = false;
   for (const w of workers){
     if (w.state === 'rest') continue;
@@ -2273,7 +2446,7 @@ function tick(now){
     } else if (w.state === 'hold'){
       drawSel(w, task.el.getBoundingClientRect());
       if (p >= 1){
-        w.sel.classList.remove('on'); w.task = null; w.state = 'rest'; w.root.classList.add('off');
+        rest(w);
         finish(task);
         assign();
       }
@@ -2281,20 +2454,23 @@ function tick(now){
     const [hx, hy] = HOT[w.kind || 'arrow'];
     w.root.style.transform = pw(w, w.x - hx, w.y - hy);
   }
-  if (busy && crewOn()) raf = requestAnimationFrame(tick);
+  // assign() may already have asked for the next frame: one loop is enough
+  if (busy && crewOn() && !raf) raf = requestAnimationFrame(tick);
 }
-function setAnim(on){
+function setAnim(on, save = true){
   ANIM.on = on;
-  try { localStorage.setItem('lorz-anim', on ? 'on' : 'off'); } catch {}
+  if (save) try { localStorage.setItem('lorz-anim', on ? 'on' : 'off'); } catch {}
   $('#animToggle').setAttribute('aria-pressed', String(on));
   crewEl.hidden = !crewOn();
   if (!crewOn()){
-    workers.forEach(w => { if (w.task) finish(w.task); w.task = null; w.state = 'rest'; w.born = false; w.root.classList.add('off'); w.sel.classList.remove('on', 'ph'); w.car.classList.remove('on'); });
+    workers.forEach(w => { const t = w.task; rest(w); w.born = false; if (t) finish(t); });
     while (queue.length) finish(queue.shift());
+    if (window.__sb) window.__sb.check();   // the rest of the page appears at once
   }
 }
 workers.forEach(w => setKind(w, 'arrow'));
-setAnim(ANIM.on);
+const deep = location.hash.length > 1 && document.getElementById(decodeURIComponent(location.hash.slice(1)));
+setAnim(ANIM.on && !deep, false);
 $('#animToggle').addEventListener('click', () => setAnim(!ANIM.on));
 
 /* ========== 2) intro: the hero built by the crew ========== */
@@ -2306,7 +2482,12 @@ async function runIntro(force){
   const builds = $$('header .build, .hero .build');
   intro.hidden = false; editor.hidden = false; intro.classList.remove('gone'); editor.classList.remove('gone'); editor.innerHTML = '';
   $('#intro .mark').classList.remove('lit'); const bar = $('#intro .bar i'); bar.style.transition = 'none'; bar.style.transform = 'scaleX(0)'; void bar.offsetWidth; bar.style.transition = '';
-  if (!ANIM.on && !force){ builds.forEach(b => { b.classList.add('built'); b._done = true; }); intro.hidden = true; editor.hidden = true; document.body.classList.remove('locked'); crewHold = false; assign(); return; }
+  if (!ANIM.on && !force){
+    builds.forEach(b => { b.classList.add('built'); b._done = true; }); intro.hidden = true; editor.hidden = true; document.body.classList.remove('locked'); crewHold = false; assign();
+    if (window.__sb) window.__sb.check();
+    if (deep) deep.scrollIntoView({ behavior: 'instant' });
+    return;
+  }
   crewHold = true;
   introRunning = true; ANIM.force = !!force; crewEl.hidden = false; document.body.classList.add('locked');
   const w = (ms) => wait(ms * pace);
@@ -2342,7 +2523,7 @@ $('#animReplay').addEventListener('click', async (e) => {
   [...queue, ...workers.map(w => w.task)].forEach(t => t && abort(t));
   queue.length = 0;
   $$('.build').forEach(el => { el._done = false; });
-  workers.forEach(w => { const t = w.task; if (t){ if (t.ghost) t.ghost.remove(); if (t.el._op) unpose(t.el); t.el._q = false; } w.task = null; w.state = 'rest'; w.born = false; w.root.classList.add('off'); w.sel.classList.remove('on', 'ph'); w.car.classList.remove('on'); });
+  workers.forEach(w => { rest(w); w.born = false; });
   document.querySelectorAll('.build [style*="clip-path"], .build[style*="clip-path"]').forEach(n => { n.style.clipPath = ''; });
   if (window.__sb) window.__sb.reset();
   $$('header .build, .hero .build').forEach(el => el.classList.remove('built', 'now'));
@@ -2413,7 +2594,7 @@ const cmp = $('#compare'), after = $('#after'), handle = $('#handle'); let drag 
 function setPos(x){ const r = cmp.getBoundingClientRect(); const p = Math.max(0, Math.min(1, (x - r.left) / r.width)); after.style.clipPath = `inset(0 0 0 ${p*100}%)`; handle.style.left = p*100 + '%'; }
 cmp.addEventListener('pointerdown', e => { drag = true; cmp.setPointerCapture(e.pointerId); setPos(e.clientX); });
 cmp.addEventListener('pointermove', e => { if (drag || e.pointerType === 'mouse') setPos(e.clientX); });
-cmp.addEventListener('pointerup', () => drag = false);
+['pointerup', 'pointercancel', 'lostpointercapture'].forEach(ev => cmp.addEventListener(ev, () => { drag = false; }));
 
 // process progress
 const steps = $('#steps'), fill = $('#stepFill'), stepEls = $$('.step', steps);
@@ -2446,6 +2627,9 @@ $$('.qa button').forEach(b => b.addEventListener('click', () => {
 
 // contact: prepare the message in the page (nothing is sent)
 const form = $('#form'), ready = $('#ready'), out = $('#msgOut'), err = $('#err');
+{ const FORMATS = { 'landing-page': ['sSite', 'Landing Page'], 'site-completo': ['sSite', 'Site Completo'], 'solucoes-personalizadas': ['sSol', 'Soluções Personalizadas'] };
+  const f = FORMATS[new URLSearchParams(location.search).get('formato')];
+  if (f){ $('#' + f[0]).checked = true; $('#fMsg').value = `Tenho interesse em ${f[1]}. `; } }
 form.addEventListener('submit', e => {
   e.preventDefault();
   const d = new FormData(form), nome = (d.get('nome')||'').trim(), msg = (d.get('mensagem')||'').trim();
@@ -2463,9 +2647,238 @@ $('#copy').addEventListener('click', () => {
   try { navigator.clipboard.writeText(t).then(() => st.textContent = 'Mensagem copiada.', fallback); } catch { fallback(); }
 });
 
+/* ========== 6) principais projetos: carrossel em perspectiva ========== */
+/* Os projetos ficam todos aqui. Para incluir, remover ou mudar a ordem, edite esta lista.
+   name, category  nome e tipo de solução
+   description     uma frase de contexto: o que é o site e para quem
+   features        o que cada funcionalidade faz (uma frase por item; até três cabem bem)
+   image           retrato 680×1100 em assets/projetos/ (as capturas do projeto compostas sobre uma cor da Lorz)
+   bg              versão pequena da captura, usada desfocada no fundo da seção
+   alt             o que a imagem mostra, para leitores de tela
+   status          'real' (trabalho para um negócio real), 'conceitual' (estudo sem cliente) ou 'demonstrativo' (exemplo fictício)
+   url             destino do botão "Abrir projeto"; sem url, o botão não aparece */
+const PROJECTS = [
+  { name: 'Flat Jardim Serrano', category: 'Site completo · Hospedagem', status: 'real', url: null,
+    image: 'assets/projetos/flat.jpg', bg: 'assets/projetos/flat-fundo.jpg',
+    alt: 'Site do Flat Jardim Serrano no computador e no celular, com o seletor de flats em destaque',
+    description: 'Site dos sete flats privativos para casais do Flat Jardim Serrano, em Serra Negra (SP).',
+    features: [
+      'Seletor de flats: você marca o que não pode faltar e vê só as unidades que têm tudo.',
+      'Consultar datas: o formulário conta as noites e abre o WhatsApp com a mensagem pronta.',
+      'Uma página por flat, com fotos, comodidades e regras, no tema claro ou escuro.',
+    ] },
+  { name: 'Brasa', category: 'Site e pedido online · Hamburgueria', status: 'conceitual', url: null,
+    image: 'assets/projetos/brasa.jpg', bg: 'assets/projetos/brasa-fundo.jpg',
+    alt: 'Site da Brasa com o hambúrguer em 3D separado em camadas, a sacola no celular e o pagamento por Pix',
+    description: 'Site de hamburgueria com cardápio, história da casa e pedido online, hoje em modo de demonstração.',
+    features: [
+      'Hambúrguer em 3D: arraste para girar; ao rolar a página, as camadas se separam.',
+      'Pedido em quatro passos: sacola, entrega ou retirada, pagamento e revisão.',
+      'Pix com código copia e cola, cartão na maquininha ou dinheiro com troco.',
+    ] },
+  { name: 'Isadora Guirelli', category: 'Landing page · Saúde capilar', status: 'real', url: null,
+    image: 'assets/projetos/isa.jpg', bg: 'assets/projetos/isa-fundo.jpg',
+    alt: 'Site de Isadora Guirelli no computador e no celular, com os caminhos Sinais de atenção e Cuidados',
+    description: 'Site de tricologia para quem percebeu queda ou afinamento dos fios e quer entender os próximos passos.',
+    features: [
+      'Quatro caminhos logo no início: sinais, cuidados, como funciona e contato.',
+      'Páginas que explicam o que observar nos fios e quando procurar um dermatologista.',
+      'Atalho do WhatsApp no celular, que some quando outro contato já está na tela.',
+    ] },
+];
+const STATUS = { demonstrativo: 'Projeto demonstrativo', conceitual: 'Projeto conceitual', real: '', publicado: '' };
+// the caption of one project, built with textContent (the list is data, never markup)
+function capNode(p, i, n, part){
+  const flag = STATUS[p.status] || '', c = document.createElement('div'); c.className = 'pj-cap';
+  if (part === 'head'){
+    c.innerHTML = `<p class="pj-meta"><span class="pj-cat"></span>${flag ? '<span class="pj-flag"></span>' : ''}</p>
+      <h3 class="pj-name"></h3><i class="pj-rule" aria-hidden="true"></i><span class="sr">Projeto ${i + 1} de ${n}.</span>`;
+    c.querySelector('.pj-cat').textContent = p.category; c.querySelector('.pj-name').textContent = p.name;
+    if (flag) c.querySelector('.pj-flag').textContent = flag;
+  } else {
+    c.innerHTML = `<p class="pj-desc"></p>${(p.features || []).length ? '<ul class="pj-feats" aria-label="Funcionalidades"></ul>' : ''}
+      ${p.url ? '<a class="pj-open btn" target="_blank" rel="noopener">Abrir projeto<span class="sr"> (abre em nova aba)</span></a>' : ''}`;
+    c.querySelector('.pj-desc').textContent = p.description;
+    (p.features || []).forEach(f => { const li = document.createElement('li'); li.textContent = f; c.querySelector('.pj-feats').appendChild(li); });
+    if (p.url) c.querySelector('.pj-open').href = p.url;
+  }
+  [...c.children].forEach((k, m) => k.style.setProperty('--i', m));
+  return c;
+}
+
+(function projects(){
+  const sec = $('#projetos'); if (!sec || !PROJECTS.length) return;
+  const stage = $('.pj-stage', sec), track = $('.pj-track', sec), capBox = $('.pj-caption', sec), detBox = $('.pj-detail', sec), bgBox = $('.pj-bg', sec);
+  const BOXES = [[capBox, 'head'], [detBox, 'body']];
+  const nowEl = $('.pj-now', sec), barEl = $('.pj-bar i', sec);
+  const n = PROJECTS.length, pad = (k) => String(k).padStart(2, '0');
+  $('.pj-total', sec).textContent = pad(n);
+  // with few projects the list is repeated, so one copy can wait hidden behind each side while the other is on screen
+  const copies = Math.max(1, Math.ceil(8 / n)), N = n * copies;
+  const panels = [];
+  for (let j = 0; j < N; j++){
+    const p = PROJECTS[j % n], el = document.createElement('div');
+    el.className = 'pj-card'; el.dataset.j = j;
+    el.innerHTML = `<div class="pj-lift"><img src="${p.image}" alt="" width="680" height="1100" decoding="async" ${j < n ? '' : 'loading="lazy"'} draggable="false"><span class="pj-dim"></span><span class="pj-peek" aria-hidden="true"><span class="pj-peek-cat"></span><b class="pj-peek-name"></b></span></div>`;
+    el.querySelector('.pj-peek-cat').textContent = p.category; el.querySelector('.pj-peek-name').textContent = p.name;
+    track.appendChild(el); panels.push({ el, pos: 0 });
+  }
+  let active = 0, R = 2;   // R: how many neighbours show on each side
+
+  // where each offset sits: the centre in front, neighbours turned toward it, the far ones smaller and behind
+  const X = [0, .84, 1.52, 2.1], S = [1, .86, .72, .6], Y = [0, 24, 30, 34], Z = [0, -70, -150, -230], SH = [0, .4, .62, .85];
+  const XM = [0, 1.02, 1.9], SM = [1, .88, .76], YM = [0, 10, 14];
+  function place(pnl, pos){
+    const a = Math.abs(pos), s = Math.sign(pos), mob = R === 1, k = Math.min(a, mob ? 2 : 3);
+    const x = (mob ? XM : X)[k] + (a > k ? (a - k) * .6 : 0);
+    const st = pnl.el.style;
+    st.setProperty('--x', (s * x).toFixed(3));
+    st.setProperty('--s', (mob ? SM : S)[k]);
+    st.setProperty('--ry', (-s * (mob ? YM : Y)[k]) + 'deg');
+    st.setProperty('--z', (mob ? 0 : Z[k]) + 'px');
+    st.setProperty('--sh', a === 0 ? 0 : SH[Math.min(a, 3)]);
+    st.zIndex = 20 - a;
+    st.opacity = a > R ? 0 : 1;
+    pnl.el.classList.toggle('on', a === 0);
+    pnl.el.classList.toggle('side', a > 0 && a <= R);
+    pnl.el.classList.toggle('right', pos > 0);   // its name label sits on the outer side, clear of the active caption
+    const img = pnl.el.querySelector('img');
+    img.alt = a === 0 ? PROJECTS[+pnl.el.dataset.j % n].alt : '';
+    pnl.el.setAttribute('aria-hidden', a === 0 ? 'false' : 'true');
+  }
+  function layout(first){
+    panels.forEach((pnl, j) => {
+      let pos = ((j - active) % N + N) % N; if (pos > N / 2) pos -= N;
+      // a panel that went round the back (hidden before and after) moves without a transition
+      const wrapped = !first && Math.abs(pos - pnl.pos) > N / 2;
+      if (first || wrapped){ pnl.el.style.transition = 'none'; place(pnl, pos); void pnl.el.offsetWidth; pnl.el.style.transition = ''; }
+      else place(pnl, pos);
+      pnl.pos = pos;
+    });
+  }
+
+  // caption: the old one leaves, then the new one comes in; only the newest stays
+  function caption(i, first){
+    BOXES.forEach(([box, part]) => {
+      const c = capNode(PROJECTS[i], i, n, part); if (!first) c.classList.add('in');
+      $$('.pj-cap', box).forEach(o => { if (o.classList.contains('out')) o.remove(); else { o.classList.remove('in'); o.classList.add('out'); o.setAttribute('aria-hidden', 'true'); o.querySelectorAll('a').forEach(a => a.tabIndex = -1); setTimeout(() => o.remove(), 220); } });
+      box.appendChild(c);
+    });
+  }
+  // background: the new image is decoded first, then fades in over the old one (never through black)
+  let bgToken = 0;
+  function background(i){
+    const t = ++bgToken, img = new Image(); img.src = PROJECTS[i].bg; img.alt = ''; img.className = 'pj-bgimg';
+    (img.decode ? img.decode() : Promise.resolve()).catch(() => {}).then(() => {
+      if (t !== bgToken) return;
+      bgBox.appendChild(img); void img.offsetWidth; img.classList.add('on');
+      const old = [...bgBox.children].slice(0, -1);
+      setTimeout(() => old.forEach(o => o.remove()), 900);
+    });
+  }
+  function counter(i){ nowEl.textContent = pad(i + 1); barEl.style.transform = `scaleX(${(i + 1) / n})`; }
+
+  function go(step){
+    if (!step) return;
+    active = ((active + step) % N + N) % N;
+    const i = active % n;
+    layout(false); caption(i); background(i); counter(i);
+    // the next images are fetched ahead, so a fast click never shows an empty panel or background
+    [1, -1, 2].forEach(k => { const q = PROJECTS[((i + k) % n + n) % n]; new Image().src = q.bg; });
+  }
+  const shortest = (j) => { let d = ((j - active) % N + N) % N; if (d > N / 2) d -= N; return d; };
+
+  $('.pj-arrow.prev', sec).addEventListener('click', () => go(-1));
+  $('.pj-arrow.next', sec).addEventListener('click', () => go(1));
+  // a click on a side panel brings it to the centre (it never opens the project)
+  track.addEventListener('click', (e) => {
+    if (dragged) return;
+    const card = e.target.closest('.pj-card'); if (!card || card.classList.contains('on')) return;
+    go(shortest(+card.dataset.j));
+  });
+  stage.addEventListener('keydown', (e) => {
+    if (e.target.closest('a')) return;
+    const k = { ArrowRight: 1, ArrowLeft: -1 }[e.key];
+    if (k){ e.preventDefault(); go(k); }
+    else if (e.key === 'Home'){ e.preventDefault(); go(-(active % n)); }
+    else if (e.key === 'End'){ e.preventDefault(); go(n - 1 - (active % n)); }
+  });
+
+  // drag (mouse) and swipe (touch): the track follows the pointer; a long drag or a quick flick changes project.
+  // Vertical movement stays with the page (touch-action: pan-y); a drag never counts as a click.
+  let drag = null, dragged = false, pw = 300, press = null;
+  stage.addEventListener('pointerdown', (e) => {
+    // any press that travels more than a few pixels is not a click, whatever direction it went
+    press = { x: e.clientX, y: e.clientY }; dragged = false;
+    if (drag || e.button > 0 || e.target.closest('button,a,.pj-detail')) return;   // a second finger is ignored
+    drag = { id: e.pointerId, x0: e.clientX, y0: e.clientY, t0: performance.now(), dx: 0, mode: '', mouse: e.pointerType === 'mouse' };
+  });
+  stage.addEventListener('pointermove', (e) => {
+    if (press && Math.hypot(e.clientX - press.x, e.clientY - press.y) > 6) dragged = true;
+    if (!drag || e.pointerId !== drag.id) return;
+    const mx = e.clientX - drag.x0, my = e.clientY - drag.y0, slop = drag.mouse ? 6 : 10;
+    if (!drag.mode){
+      if (Math.abs(mx) > slop && Math.abs(mx) > Math.abs(my) * 1.2){
+        drag.mode = 'x'; drag.t0 = performance.now(); drag.x0 = e.clientX - Math.sign(mx) * slop;
+        stage.setPointerCapture(drag.id); track.classList.add('drag'); stage.classList.add('grabbing');
+      } else if (Math.abs(my) > slop){ drag = null; return; }
+    }
+    if (drag.mode === 'x'){ drag.dx = e.clientX - drag.x0; track.style.translate = `${(drag.dx * .6).toFixed(1)}px 0`; }
+  });
+  const end = (e) => {
+    if (!drag || e.pointerId !== drag.id) return;
+    const d = drag; drag = null;
+    if (d.mode !== 'x') return;
+    track.classList.remove('drag'); stage.classList.remove('grabbing');
+    track.style.translate = '';        // eases back from wherever the pointer left it
+    dragged = true;
+    const dist = Math.abs(d.dx), v = dist / Math.max(1, performance.now() - d.t0);
+    if (e.type === 'pointercancel' || (dist < pw * .35 && v < .11)) return;
+    go((d.dx < 0 ? 1 : -1) * (dist > pw * 1.3 ? 2 : 1));
+  };
+  stage.addEventListener('pointerup', end); stage.addEventListener('pointercancel', end);
+  // the click that follows a moved press is dropped, then the flag is cleared for the next press
+  stage.addEventListener('click', () => { setTimeout(() => { dragged = false; press = null; }, 0); }, true);
+  // a horizontal trackpad swipe moves one project at a time; vertical wheel stays with the page
+  // one project per gesture: after a change, the rest of that swipe (its momentum included) is ignored until it stops
+  let wheelX = 0, wheelLock = 0;
+  stage.addEventListener('wheel', (e) => {
+    if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return;
+    e.preventDefault();
+    const t = performance.now();
+    if (t < wheelLock){ wheelLock = t + 220; return; }
+    wheelX += e.deltaX;
+    if (Math.abs(wheelX) > 40){ go(wheelX > 0 ? 1 : -1); wheelX = 0; wheelLock = t + 220; }
+  }, { passive: false });
+
+  // sizes follow the stage; on small screens one neighbour peeks on each side and the text sits below
+  function measure(){
+    const W = stage.clientWidth, mob = matchMedia('(max-width: 899px)').matches;
+    R = mob ? 1 : Math.min(2, Math.floor((n - 1) / 2));   // with few projects, no copy shows twice on screen
+    let ph;
+    if (mob){ pw = Math.min(W * .74, 360); ph = pw * 1.18; }
+    else { const H = track.clientHeight; ph = H * .8; pw = Math.min(ph * 680 / 1100, W * .25); ph = pw * 1100 / 680; }
+    stage.style.setProperty('--pw', pw.toFixed(1) + 'px'); stage.style.setProperty('--ph', ph.toFixed(1) + 'px');
+    // the caption box keeps the height of the tallest project, so changing project never moves the page
+    // (the head only needs it on small screens, where it sits in the flow; the explanation always does)
+    BOXES.forEach(([box, part]) => {
+      if (part === 'head' && !mob){ box.style.minHeight = ''; return; }
+      const probe = document.createElement('div'); probe.className = box.classList[0] + ' pj-probe'; probe.setAttribute('aria-hidden', 'true');
+      probe.style.width = box.clientWidth + 'px'; box.after(probe);
+      let h = 0; PROJECTS.forEach((p, i) => { probe.innerHTML = ''; const c = capNode(p, i, n, part); probe.appendChild(c); h = Math.max(h, c.offsetHeight); });
+      probe.remove(); box.style.minHeight = h + 'px';
+    });
+    layout(true);
+  }
+  let rz = 0; addEventListener('resize', () => { cancelAnimationFrame(rz); rz = requestAnimationFrame(measure); });
+  if (document.fonts) document.fonts.ready.then(measure);
+  measure(); caption(0, true); counter(0);
+  { const img = new Image(); img.src = PROJECTS[0].bg; img.alt = ''; img.className = 'pj-bgimg on'; bgBox.appendChild(img); }
+})();
+
 /* ========== 5) sections built by the crew as you scroll ========== */
 function startScrollBuild(){
-  const TARGETS = '.sec-head h2, .sec-head > div > p, .sec-head > .fig, .format, .pillars > div, .sol, .compare-wrap > div:first-child, .scope-copy > *, .scope-preview, .step, .faq > div:first-child, .qa, .contact > div:first-child > *, form.tile';
+  const TARGETS = '.sec-head h2, .sec-head > div > p, .sec-head > .fig, .format, .pillars > div, .sol, .compare-wrap > div:first-child, .scope-copy > *, .scope-preview, .pj-stage, .step, .faq > div:first-child, .qa, .contact > div:first-child > *, form.tile';
   const MEDIA = '.sec-head > .fig, .format, .sol, .scope-preview, form.tile';
   const secs = $$('main > section:not(.hero)').map(sec => ({ sec, items: $$(TARGETS, sec), layer: null, t: 0 }));
   const all = secs.flatMap(s => s.items.map(el => (el._s = s, el)));
@@ -2473,6 +2886,7 @@ function startScrollBuild(){
     if (el.matches('.format, .sol')) return 'Card · ' + $('h3', el).textContent;
     if (el.matches('.compare')) return 'Componente · Antes/Depois';
     if (el.matches('.scope-preview')) return 'Componente · Prévia do escopo';
+    if (el.matches('.pj-stage')) return 'Carrossel · Projetos';
     if (el.matches('fieldset')) return 'Grupo · ' + $('legend', el).textContent;
     if (el.matches('form')) return 'Form · Contato';
     if (el.matches('.fig')) return 'Hairline · ' + el.dataset.hairlineHost;
@@ -2506,7 +2920,8 @@ function startScrollBuild(){
     // built once, the first time it is scrolled to, like the page loading; it never comes apart again
     for (const el of all){
       const r = el.getBoundingClientRect();
-      if (r.top < line && !el.classList.contains('built') && !el._q) enqueue(el, () => progress(el._s), true);
+      // with the animations off (or arriving from a link) everything is simply there, not revealed on scroll
+      if ((r.top < line || !crewOn()) && !el.classList.contains('built') && !el._q) enqueue(el, () => progress(el._s), true);
     }
     // everything that came into view is queued first, then the builder picks in order
     assign();
@@ -2519,6 +2934,7 @@ function startScrollBuild(){
   };
   check();
 }
+
 })();
 </script>
 

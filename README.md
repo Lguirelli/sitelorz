@@ -14,11 +14,20 @@ O `index.html` é autossuficiente: fontes, SVGs e scripts estão embutidos. Ele 
 ## Estrutura
 
 ```
-index.html            página pronta (gerada a partir de src/)
+index.html            página principal (gerada a partir de src/)
+landing-page.html     subpágina do formato Landing Page
+site-completo.html    subpágina do formato Site Completo
+solucoes-personalizadas.html  subpágina de Soluções Personalizadas
+assets/               CSS, fontes e logo das subpáginas
 .nojekyll             faz o GitHub Pages servir os arquivos como estão
 src/
-  template.html       HTML, CSS e JS da página, com marcadores {{...}} para os assets
-  build.py            embute fontes, SVGs e scripts no template e gera o index.html
+  template.html       HTML, CSS e interações da página, com marcadores {{...}} para os assets e scripts
+  crew.js             a equipe de cursores e a abertura (motor da construção)
+  crew_scroll.js      a construção das seções conforme a rolagem
+  projetos.js         lista dos Principais projetos (nome, categoria, imagem, descrição, status, link) e o carrossel
+  projetos/           cartazes (680×1100) e fundos dos projetos; o build copia para assets/projetos/
+  build.py            embute fontes, SVGs e scripts no template, gera o index.html e chama o subpages.py
+  subpages.py         conteúdo e layout das três subpáginas
   brand/              SVGs da Lorz (logo, ícone, retrato positivo e negativo)
   fonts/              Brandson, Alte Haas Grotesk e Advercase (woff2)
   hairline/           kernel Hairline (sem alteração) e as figuras montagem, bandeja e esteira
@@ -26,7 +35,7 @@ src/
 
 ## Editar
 
-Altere `src/template.html` ou uma figura em `src/hairline/` e gere a página de novo (Python 3, sem dependências):
+Altere `src/template.html`, `src/crew.js`, `src/crew_scroll.js`, `src/subpages.py` ou uma figura em `src/hairline/` e gere a página de novo (Python 3, sem dependências):
 
 ```bash
 python3 src/build.py
@@ -41,3 +50,7 @@ python3 src/build.py
 - Ilustrações Hairline: **Montagem** (hero), **Bandeja** (Criação de sites) e **Esteira** (Soluções personalizadas).
 - Formulário de contato que só prepara a mensagem para copiar. Nada é enviado: ligue-o a um serviço de formulários ou ao fluxo do site antes de publicar de verdade.
 - Tema claro e escuro, de acordo com o sistema. Com "reduzir movimento" ativado, a construção continua, só com esmaecimento.
+- Sem JavaScript, a página aparece inteira como conteúdo estático, sem a abertura.
+- Principais projetos: carrossel em perspectiva com o projeto ativo no centro, vizinhos girados e o fundo desfocado da imagem ativa. Setas, clique num painel lateral, setas do teclado (com o carrossel em foco) e arrasto no celular. Os projetos são Flat Jardim Serrano, Brasa (marcado como conceitual) e Isadora Guirelli; o nome fica sobre o painel e, abaixo do carrossel, uma frase de contexto e o que cada funcionalidade faz. Para trocar, edite a lista `PROJECTS` em `src/projetos.js` (com `url`, aparece o botão "Abrir projeto").
+- Os cards de Criação de sites abrem subpáginas com escopo, mapa de exemplo, exemplos de uso e perguntas de cada formato. As subpáginas não têm a construção animada; só mostram um skeleton enquanto as fontes carregam.
+- Quem chega por um link de seção (por exemplo, ao voltar de uma subpágina) vê a página pronta, sem a abertura. O botão "Pedir proposta" das subpáginas já marca o formato no formulário.
