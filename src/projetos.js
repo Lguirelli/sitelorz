@@ -86,7 +86,7 @@ function capNode(p, i, n, part){
 
   // where each offset sits (as in the reference): the centre in front; the neighbours almost touching it and turned
   // toward it, so the edge facing the centre is the taller one; the far ones smaller, further back and darker
-  const X = [0, .9, 1.6, 2.15], S = [1, .84, .68, .56], Y = [0, 20, 26, 30], Z = [0, -60, -150, -240], SH = [0, .34, .58, .85];
+  const X = [0, .9, 1.6, 2.15], S = [1, .84, .68, .56], Y = [0, 20, 26, 30], Z = [0, -60, -150, -240], SH = [0, .16, .34, .6];
   const XM = [0, 1.02, 1.9], SM = [1, .88, .76], YM = [0, 10, 14];
   function place(pnl, pos){
     const a = Math.abs(pos), s = Math.sign(pos), mob = R === 1, k = Math.min(a, mob ? 2 : 3);
@@ -121,7 +121,7 @@ function capNode(p, i, n, part){
   function caption(i, first){
     BOXES.forEach(([box, part]) => {
       const c = capNode(PROJECTS[i], i, n, part); if (!first) c.classList.add('in');
-      $$('.pj-cap', box).forEach(o => { if (o.classList.contains('out')) o.remove(); else { o.classList.remove('in'); o.classList.add('out'); o.setAttribute('aria-hidden', 'true'); o.querySelectorAll('a').forEach(a => a.tabIndex = -1); setTimeout(() => o.remove(), 220); } });
+      $$('.pj-cap', box).forEach(o => { if (o.classList.contains('out')) o.remove(); else { o.classList.remove('in'); o.classList.add('out'); o.setAttribute('aria-hidden', 'true'); o.querySelectorAll('a').forEach(a => a.tabIndex = -1); setTimeout(() => o.remove(), 260); } });
       box.appendChild(c);
     });
   }
@@ -138,11 +138,24 @@ function capNode(p, i, n, part){
   }
   function counter(i){ nowEl.textContent = pad(i + 1); barEl.style.transform = `scaleX(${(i + 1) / n})`; }
 
+  // the depth dip of the reference: while the panels travel, the whole row steps back a little and returns,
+  // from wherever it is (a click during a dip continues from the current depth, never from a jump)
+  const still = matchMedia('(prefers-reduced-motion: reduce)');
+  let dip = null;
+  function breathe(){
+    if (still.matches || !track.animate) return;
+    const from = dip ? parseFloat(getComputedStyle(track).scale) || 1 : 1;
+    if (dip) dip.cancel();
+    const low = R === 1 ? .965 : .93;
+    dip = track.animate([{ scale: String(from) }, { scale: String(low), offset: .42 }, { scale: '1' }],
+      { duration: 760, easing: 'cubic-bezier(.45,0,.55,1)' });
+    dip.onfinish = () => { dip = null; };
+  }
   function go(step){
     if (!step) return;
     active = ((active + step) % N + N) % N;
     const i = active % n;
-    layout(false); caption(i); background(i); counter(i);
+    untilt(); layout(false); breathe(); caption(i); background(i); counter(i);
     // the next images are fetched ahead, so a fast click never shows an empty panel or background
     [1, -1, 2].forEach(k => { const q = PROJECTS[((i + k) % n + n) % n]; new Image().src = q.bg; });
   }
@@ -199,6 +212,32 @@ function capNode(p, i, n, part){
     go((d.dx < 0 ? 1 : -1) * (dist > pw * 1.3 ? 2 : 1));
   };
   stage.addEventListener('pointerup', end); stage.addEventListener('pointercancel', end);
+
+  // the hover of the reference: the centre panel leans toward the pointer in 3D, the title leans with it a little in
+  // front, and the image slides the other way inside (depth). Mouse only, never while dragging or travelling.
+  const fine = matchMedia('(hover: hover) and (pointer: fine)');
+  let tiltRaf = 0, tiltAt = null;
+  function untilt(){
+    cancelAnimationFrame(tiltRaf); tiltRaf = 0; tiltAt = null;
+    stage.classList.remove('tilt');
+    ['--tx', '--ty'].forEach(k => stage.style.setProperty(k, '0deg')); ['--mx', '--my'].forEach(k => stage.style.setProperty(k, '0'));
+  }
+  stage.addEventListener('pointermove', (e) => {
+    if (e.pointerType !== 'mouse' || !fine.matches || still.matches || R === 1 || (drag && drag.mode)) return;
+    const card = e.target.closest && e.target.closest('.pj-card.on');
+    if (!card){ if (stage.classList.contains('tilt')) untilt(); return; }
+    tiltAt = { x: e.clientX, y: e.clientY, card };
+    if (tiltRaf) return;
+    tiltRaf = requestAnimationFrame(() => {
+      tiltRaf = 0; if (!tiltAt) return;
+      const r = tiltAt.card.getBoundingClientRect();
+      const nx = Math.max(-1, Math.min(1, (tiltAt.x - r.left) / r.width * 2 - 1)), ny = Math.max(-1, Math.min(1, (tiltAt.y - r.top) / r.height * 2 - 1));
+      stage.style.setProperty('--ty', (nx * 8).toFixed(2) + 'deg'); stage.style.setProperty('--tx', (-ny * 6).toFixed(2) + 'deg');
+      stage.style.setProperty('--mx', nx.toFixed(3)); stage.style.setProperty('--my', ny.toFixed(3));
+      stage.classList.add('tilt');
+    });
+  });
+  stage.addEventListener('pointerleave', untilt);
   // the click that follows a moved press is dropped, then the flag is cleared for the next press
   stage.addEventListener('click', () => { setTimeout(() => { dragged = false; press = null; }, 0); }, true);
   // a horizontal trackpad swipe moves one project at a time; vertical wheel stays with the page
