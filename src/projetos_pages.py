@@ -1,14 +1,11 @@
-"""Gera a página de cada projeto da seção "Principais projetos".
+"""Páginas de projeto da seção "Principais projetos": conteúdo e layout.
 
-Mesma base das subpáginas dos formatos (cabeçalho e rodapé da Lorz, sub.css, skeleton só enquanto as
-fontes carregam). Saídas na raiz: projeto-<slug>.html. Imagens em assets/projetos/<pasta>/ (fonte: src/projetos/).
+Mesma base das subpáginas dos formatos (cabeçalho e rodapé da Lorz, src/css/sub.css, skeleton só enquanto as
+fontes carregam). Saídas na raiz: projeto-<slug>.html. Imagens em assets/projetos/<pasta>/ (WebP).
 Cada página mostra o projeto funcionando, a partir de demos/<pasta>/ (o Flat é preparado por src/demo_flat.py).
-O texto do carrossel fica em src/projetos.js; aqui está a explicação completa, em linguagem de cliente.
+O texto do carrossel fica em src/js/projetos.js; aqui está a explicação completa, em linguagem de cliente.
 """
-import html
-from subpages import OUT, SPRITE, HEAD_ASSETS, FOOTER, header, icon
-
-e = html.escape
+from layout import FOOTER, OUT, e, header, icon, subpage, write
 
 PROJECTS = [
   dict(
@@ -111,16 +108,83 @@ PROJECTS = [
             ('i-blocks', 'Simples de manter no ar', 'São arquivos leves que funcionam em qualquer hospedagem, sem depender de plataforma.'),
             ('i-users', 'Para todo mundo', 'Funciona com teclado e com leitores de tela, e o menu do celular abre e fecha de um jeito previsível.')],
     cta='Quer um site que explique antes de vender?'),
+  dict(
+    slug='belisca', dir='belisca', name='Belisca!', color='var(--accent)',
+    category='Loja virtual para marcas de snacks',
+    title='<em>Belisca!</em>',
+    lede='Loja virtual de uma mercearia de snacks com doze produtos de marcas independentes. O cliente busca, filtra, monta o carrinho, aplica cupom e segue pelo checkout até a revisão do pedido.',
+    note='Projeto conceitual: a Belisca e as marcas são fictícias. O checkout é demonstrativo e termina antes de qualquer pagamento ou coleta de dados.',
+    hero=('home', 'Página inicial da Belisca com o destaque “Crocância de verdade” e três embalagens de salgados',
+          'celular', 'A página inicial no celular'),
+    demo_note='Navegue pelo catálogo, abra um produto e monte um carrinho. Os cupons de teste aparecem no carrinho e no rodapé. Nada é cobrado nem enviado.',
+    fits=['Você vende produtos com fotos e preços e quer uma vitrine própria, fora dos marketplaces.',
+          'Seu catálogo cresceu e o cliente precisa de busca e filtros para achar o que quer.',
+          'Você trabalha com cupons, ofertas com prazo e frete grátis a partir de um valor.'],
+    nots=[('Você tem poucos produtos e fecha a venda pelo WhatsApp.', 'landing-page', 'Landing Page'),
+          ('A loja precisa conversar com estoque, nota fiscal ou sistema de gestão.', 'solucoes-personalizadas', 'Soluções Personalizadas')],
+    features=[
+      dict(img='catalogo', alt='Catálogo com o título “Toda a prateleira” e as seis categorias de snacks',
+           title='Prateleira organizada',
+           text='O catálogo tem filtros por categoria, marca, preço e tipo, e a busca fica no topo de todas as páginas. Quem chega sabendo o que quer encontra em poucos toques.'),
+      dict(img='produto', alt='Página da Pipoca Gourmet Chocolate Belga, com foto da embalagem, preço com desconto e botão de adicionar ao carrinho',
+           title='Página que vende o produto',
+           text='Cada produto tem galeria de fotos, preço com o desconto à vista, selos, ingredientes e tabela nutricional. O botão de compra fica junto da quantidade e do total.'),
+      dict(img='carrinho', phone='celular-carrinho', alt='Carrinho com dois produtos, campo de cupom e a barra de quanto falta para o frete grátis; no celular, o mesmo carrinho',
+           title='Carrinho que ajuda a fechar',
+           text='O carrinho fica guardado se a pessoa sair e voltar. Ele aceita cupom, mostra a economia das ofertas e avisa quanto falta para o frete grátis.'),
+      dict(img='checkout', alt='Primeira etapa do checkout, com a escolha de um perfil fictício e o resumo do pedido ao lado',
+           title='Checkout em etapas',
+           text='Identificação, entrega, frete e revisão, uma etapa por vez, com o resumo do pedido sempre à vista. Na demonstração, perfis e endereços são fictícios e o fluxo para antes do pagamento.'),
+    ],
+    extras=[('i-plug', 'Pronto para vender de verdade', 'Para receber pedidos reais, falta ligar o checkout ao meio de pagamento e ao cálculo de frete da loja.'),
+            ('i-devices', 'Feito para o celular', 'Menu, busca, carrinho e checkout foram pensados primeiro para a tela pequena.'),
+            ('i-database', 'Catálogo num lugar só', 'Produtos, preços, categorias e destaques ficam separados do visual. Entrar um produto novo não mexe no resto da loja.'),
+            ('i-loop', 'Movimento na medida', 'As animações dão ritmo à vitrine e se desligam para quem prefere menos movimento.')],
+    cta='Quer uma loja com a cara da sua marca?'),
+  dict(
+    slug='helios-44-2', dir='helios', name='Helios 44-2', color='var(--red-400)',
+    category='Página de produto em 3D',
+    title='Helios <em>44-2</em>.',
+    lede='Página que apresenta uma objetiva fotográfica clássica por dentro. Conforme a pessoa rola, o modelo 3D se desmonta peça por peça, e cada parte ganha nome e explicação.',
+    note='Projeto conceitual: um estudo de apresentação de produto, sem cliente e sem venda.',
+    hero=('home', 'Abertura da página, com a lente Helios 44-2 em 3D ao centro e o título dividido dos dois lados',
+          'celular', 'A abertura da página no celular'),
+    demo_note='Role a página dentro do quadro para abrir a lente. São nove capítulos, da história à vista de todas as peças em linha. O modelo 3D leva alguns segundos para carregar.',
+    fits=['Seu produto tem engenharia, materiais ou detalhes que uma foto não mostra.',
+          'Você quer que o cliente entenda como o produto funciona antes de falar em preço.',
+          'Você precisa de uma página de lançamento que as pessoas tenham vontade de mostrar para alguém.'],
+    nots=[('Você tem muitos produtos e precisa de catálogo e carrinho.', 'site-completo', 'Site Completo'),
+          ('Você precisa de uma página simples para uma campanha com prazo curto.', 'landing-page', 'Landing Page')],
+    features=[
+      dict(img='origem', alt='Capítulo “Herdeira do Biotar”, com a lente em 3D ao centro e a ficha técnica ao lado',
+           title='História e ficha técnica',
+           text='A página começa pelo contexto: de onde vem o produto e os números que importam, numa ficha fácil de consultar.'),
+      dict(img='optica', alt='A lente aberta em anéis, com os componentes numerados e a explicação dos grupos ópticos',
+           title='O produto se abre na rolagem',
+           text='Ao descer a página, o modelo 3D se separa em partes. Cada peça recebe um número, um nome e uma frase sobre o que faz.'),
+      dict(img='diafragma', alt='Capítulo do diafragma, com a lente desmontada e a abertura f/2.0 em destaque',
+           title='Mostra como funciona',
+           text='No capítulo do diafragma, a página mostra as oito lâminas e a escala de abertura, de f/2 a f/16. A pessoa entende o que cada controle faz sem abrir um manual.'),
+      dict(img='anatomia', phone='celular', alt='Todas as peças da lente alinhadas, sob o título “73 peças. Uma lente.”; no celular, a abertura da página',
+           title='Do computador ao celular',
+           text='O mesmo modelo 3D roda no celular, com textos e números reorganizados para a tela estreita.'),
+    ],
+    extras=[('i-loop', 'Leve para um 3D', 'O modelo foi comprimido para pouco mais de 3 MB, e a página mostra o progresso enquanto ele carrega.'),
+            ('i-devices', 'Conferida em várias telas', 'O layout foi testado do celular ao monitor grande.'),
+            ('i-search', 'Texto de verdade', 'Todo o conteúdo é texto na página, não imagem: os buscadores leem e a pessoa pode copiar.'),
+            ('i-blocks', 'Serve para outros produtos', 'A mesma estrutura de capítulos funciona para qualquer produto que possa ser modelado em 3D.')],
+    cta='Quer mostrar o seu produto por dentro?'),
 ]
 
-def img(P, name, alt=''):
-    return f'<img src="assets/projetos/{P["dir"]}/{name}.jpg" alt="{e(alt)}" loading="lazy" decoding="async">'
+def img(P, name, alt='', lazy=True):
+    load = ' loading="lazy"' if lazy else ''   # the two captures at the top of the page load right away
+    return f'<img src="assets/projetos/{P["dir"]}/{name}.webp" alt="{e(alt)}"{load} decoding="async">'
 
-def shot(P, name, alt):
-    return f'<div class="shot"><div class="bar" aria-hidden="true"><i></i><i></i><i></i></div>{img(P, name, alt)}</div>'
+def shot(P, name, alt, lazy=True):
+    return f'<div class="shot"><div class="bar" aria-hidden="true"><i></i><i></i><i></i></div>{img(P, name, alt, lazy)}</div>'
 
-def phone(P, name, alt=''):
-    return f'<div class="phone">{img(P, name, alt)}</div>'
+def phone(P, name, alt='', lazy=True):
+    return f'<div class="phone">{img(P, name, alt, lazy)}</div>'
 
 def media(P, f):
     if 'img' not in f: return f'<div class="feat-media solo">{phone(P, f["phone"], f["alt"])}</div>'
@@ -139,17 +203,7 @@ def page(P):
     demo = f'demos/{P["dir"]}/index.html'
     feats = ''.join(f'<article class="feat">{media(P, f)}<div class="feat-text"><h3>{e(f["title"])}</h3><p>{e(f["text"])}</p></div></article>'
                     for f in P['features'])
-    return f'''<!doctype html>
-<html lang="pt-BR">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>{e(P["name"])} · Projetos · Lorz</title>
-<meta name="description" content="{e(P["lede"])}">
-{HEAD_ASSETS}</head>
-<body class="pr" style="--fc:{P["color"]}">
-{SPRITE}<a class="skip" href="#conteudo">Pular para o conteúdo</a>
-{header(cta, 'Projetos')}
+    body = f'''{header(cta, 'Projetos')}
 
 <main id="conteudo">
 <section class="hero"><div class="wrap hero-grid">
@@ -160,7 +214,7 @@ def page(P):
     {f'<p class="note">{e(P["note"])}</p>' if P["note"] else ''}
     <div class="ctas"><a class="btn" href="#teste">Testar o site</a><a class="btn ghost" href="{cta}">Quero um projeto assim</a></div>
   </div>
-  <div class="art pr-art">{shot(P, h, ha)}{phone(P, ph, pha)}</div>
+  <div class="art pr-art">{shot(P, h, ha, lazy=False)}{phone(P, ph, pha, lazy=False)}</div>
 </div></section>
 
 <section class="sec band demo" id="teste"><div class="wrap">
@@ -206,63 +260,9 @@ def page(P):
 
 {FOOTER}
 {DEMO_JS}
-</body>
-</html>
 '''
-
-CSS = r'''
-/* ---------- páginas de projeto ---------- */
-.nav ul a[aria-current]{color:var(--ink)}
-.note{max-width:52ch;margin:-12px 0 30px;padding:12px 16px;border-radius:12px;box-shadow:inset 0 0 0 1px var(--line-strong);font-size:16px;color:var(--muted)}
-.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
-.shot{position:relative;border-radius:14px;overflow:hidden;background:var(--bg2);box-shadow:inset 0 0 0 1px var(--line),0 40px 80px -40px rgba(0,0,0,.6)}
-.shot .bar,.demo-frame .bar{display:flex;gap:6px;align-items:center;height:28px;padding:0 12px;border-bottom:1px solid var(--line)}
-.shot .bar i,.demo-frame .bar i{width:9px;height:9px;border-radius:50%;background:var(--line-strong)}
-.shot img{display:block;width:100%;height:auto;aspect-ratio:16/10;object-fit:cover;object-position:top}
-.phone{border-radius:24px;padding:6px;background:var(--navy-900);box-shadow:0 0 0 1px var(--line-strong),0 30px 60px -20px rgba(0,0,0,.8)}
-.phone img{display:block;width:100%;height:auto;aspect-ratio:9/19.5;object-fit:cover;object-position:top;border-radius:18px}
-.pr-art,.with-phone{position:relative;padding:0 6% 9% 0}
-.pr-art .phone,.with-phone .phone{position:absolute;right:0;bottom:0;width:25%}
-.solo{display:grid;place-items:center}.solo .phone{width:min(300px,70%)}
-.pr .hero{padding-bottom:104px}
-
-/* the live project */
-.demo .head{margin-bottom:28px}
-.demo-bar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 20px;margin-bottom:16px}
-.demo-size{display:inline-flex;padding:4px;border-radius:99px;box-shadow:inset 0 0 0 1px var(--line-strong)}
-.demo-size button{min-height:44px;padding:0 20px;border:0;border-radius:99px;background:transparent;color:var(--muted);font:700 13px/1 var(--font-heading);letter-spacing:.04em;cursor:pointer;transition:background-color 150ms ease,color 150ms ease}
-.demo-size button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
-.demo-size button:active{transform:scale(.97)}
-.demo-open{display:inline-flex;align-items:center;min-height:44px;font:700 14px/1 var(--font-heading);color:var(--ink);text-underline-offset:5px}
-.demo-frame{width:100%;margin-inline:auto;border-radius:16px;overflow:hidden;background:var(--bg2);box-shadow:inset 0 0 0 1px var(--line),0 40px 80px -40px rgba(0,0,0,.6)}
-.demo-frame iframe{display:block;width:100%;height:min(78vh,780px);min-height:520px;border:0;background:#fff}
-.demo-frame.m{max-width:400px;border-radius:30px;padding:0 8px 8px;background:var(--navy-900)}
-.demo-frame.m .bar{justify-content:center;border:0}.demo-frame.m .bar i{width:46px;height:6px;border-radius:9px}.demo-frame.m .bar i + i{display:none}
-.demo-frame.m iframe{height:min(80vh,780px);border-radius:22px}
-
-.feats{display:grid;gap:96px}
-.feat{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,.75fr);gap:56px;align-items:center}
-.feat:nth-child(even){grid-template-columns:minmax(0,.75fr) minmax(0,1.25fr)}
-.feat:nth-child(even) .feat-media{order:2}
-.feat-text{display:grid;gap:14px;align-content:start}
-.feat-text h3{font:400 clamp(30px,3vw,44px)/.95 var(--font-display);text-transform:uppercase;letter-spacing:.01em}
-.feat-text p{font-size:18px;color:var(--muted);max-width:44ch}
-.others-title{font-size:clamp(32px,3.6vw,48px)!important}
-.sk main :is(.shot,.phone) img,.sk main iframe{visibility:hidden}
-@media (max-width:960px){
-  .feat,.feat:nth-child(even){grid-template-columns:minmax(0,1fr);gap:28px}
-  .feat:nth-child(even) .feat-media{order:0}
-  .feats{gap:72px}
-  .pr .hero{padding-bottom:80px}
-}
-@media (max-width:640px){
-  .demo-size{display:none}
-  .demo-frame{border-radius:12px}
-  .demo-frame iframe{height:78vh;min-height:480px}
-}
-'''
+    return subpage(f'{P["name"]} · Projetos · Lorz', P['lede'], body, f' class="pr" style="--fc:{P["color"]}"', frames=True)
 
 def build():
-    with open(OUT / 'assets' / 'sub.css', 'a') as f: f.write(CSS)
-    for P in PROJECTS: (OUT / f'projeto-{P["slug"]}.html').write_text(page(P))
+    for P in PROJECTS: write(OUT / f'projeto-{P["slug"]}.html', page(P))
     return ['projeto-' + P['slug'] for P in PROJECTS]

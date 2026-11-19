@@ -1,47 +1,50 @@
-"""Monta a landing da Lorz: embute fontes e SVGs (como data URIs) no template.
+"""Gera o site da Lorz (Python 3, sem dependências):  python src/build.py
 
-Saídas:
-  ../index.html          página completa, pronta para hospedar
-  argv[1] (opcional)     versão sem <html>/<head>, para o visualizador de Artifacts
+Entradas em src/: index.html (corpo da página principal), css/, js/, hairline/, sprite.svg, brand/ e o conteúdo
+das subpáginas (subpages.py, projetos_pages.py).
+Saídas na raiz: index.html, as subpáginas e assets/index.css, assets/index.js e assets/sub.css.
+Fontes, imagens e SVGs servidos como arquivo ficam só em assets/ (não há cópia em src/).
 """
-import base64, pathlib, sys
+import re, sys
+sys.dont_write_bytecode = True
+from layout import OUT, asset, data_uri, document, minify_css, more, read, write
+import subpages, projetos_pages
 
-SRC = pathlib.Path(__file__).parent
-b64 = lambda p: base64.b64encode((SRC / p).read_bytes()).decode()
+FIGURES = ['montagem', 'bandeja', 'esteira']
+MAIN = ['prelude', 'crew', 'page', 'projetos', 'crew_scroll']   # um escopo só, nesta ordem
 
-tpl = (SRC / 'template.html').read_text()
-for key, path in {
-    'F_BRANDSON': 'fonts/Brandson.woff2',
-    'F_ALTE_R': 'fonts/AlteHaasGrotesk-Regular.woff2',
-    'F_ALTE_B': 'fonts/AlteHaasGrotesk-Bold.woff2',
-    'F_ADVERCASE': 'fonts/Advercase-Regular.woff2',
-    'RETRATO': 'brand/retrato-vetorizado.svg',
-    'RETRATO_NEG': 'brand/retrato-vetorizado-negativo.svg',
-    'LOGO': 'brand/lorz-logo.svg',
-    'ICON': 'brand/lorz-icone.svg',
-}.items():
-    tpl = tpl.replace('{{%s}}' % key, b64(path))
-# brand icon as a knockout mask: rounded square with the L cut out (fill-rule evenodd)
-icon_mask = ('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><path fill-rule="evenodd" '
-             'd="M12 0h40a12 12 0 0 1 12 12v40a12 12 0 0 1-12 12H12A12 12 0 0 1 0 52V12A12 12 0 0 1 12 0z M20 14h10v34h17v10H20z"/></svg>')
-tpl = tpl.replace('{{ICON_MASK}}', base64.b64encode(icon_mask.encode()).decode())
-# Hairline: o kernel (sem alteração) e as três figuras, em src/hairline/
-HL_DIR = SRC / 'hairline'
-tpl = tpl.replace('{{HL_KERNEL}}', (HL_DIR / 'kernel.js').read_text())
-for n in ['montagem', 'bandeja', 'esteira']:
-    tpl = tpl.replace('{{FIG_%s}}' % n.upper(), (HL_DIR / f'{n}.js').read_text())
-# o motor da equipe de cursores e a construção por rolagem: fonte única em src/
-tpl = tpl.replace('{{JS_PROJETOS}}', (SRC / 'projetos.js').read_text())
-tpl = tpl.replace('{{JS_CREW}}', (SRC / 'crew.js').read_text()).replace('{{JS_SCROLL}}', (SRC / 'crew_scroll.js').read_text())
-assert '{{' not in tpl, 'placeholder sem valor'
+def css(name):
+    """base.css (fontes e paleta) + a folha da página, com o logo embutido como máscara"""
+    return minify_css((read('css/base.css') + read(f'css/{name}.css')).replace('{{LOGO}}', data_uri(read('brand/lorz-logo.svg'))))
 
-full = ('<!doctype html>\n<html lang="pt-BR">\n<head>\n<meta charset="utf-8">\n'
-        '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n' + tpl + '\n</html>\n')
-(SRC.parent / 'index.html').write_text(full)
-# as subpáginas dos formatos (sem a construção animada)
-import subpages; subpages.build()
-# as imagens dos projetos (src/projetos/ → assets/projetos/)
-import shutil; shutil.copytree(SRC / 'projetos', SRC.parent / 'assets' / 'projetos', dirs_exist_ok=True)
-if len(sys.argv) > 1:
-    pathlib.Path(sys.argv[1]).write_text(tpl)
-print('ok', len(full) // 1024, 'KB')
+def js():
+    # o kernel Hairline (sem alteração), quem monta as figuras, a página e, por último, as três figuras
+    main = '(() => {\n' + ''.join(read(f'js/{n}.js') for n in MAIN) + '})();\n'
+    figures = ''.join('(() => {\n"use strict";\n' + read(f'hairline/{n}.js') + '})();\n' for n in FIGURES)
+    return read('hairline/kernel.js') + read('js/hairline-host.js') + main + figures
+
+def cards(body):
+    """each format and solution card: <!--more--> becomes the dropdown that holds a copy of the card's list"""
+    def card(m):
+        art = m.group(0)
+        return art.replace('<!--more-->', more(re.search(r'<h3>(.*?)</h3>', art).group(1), re.search(r'<ul>.*?</ul>', art, re.S).group(0)))
+    body, n = re.subn(r'<article class="tile (?:format|sol)".*?</article>', card, body, flags=re.S)
+    assert n and '<!--more-->' not in body
+    return body
+
+# marks that scripting works; if the page's script fails to load or to run, everything is shown as plain content
+BOOT = ("<script>(function(d){d.classList.add('js');addEventListener('error',function(e){var t=e.target;"
+        "if((t&&t.tagName==='SCRIPT')||(e.error&&/\\/assets\\/index\\.js/.test(e.filename||''))){d.classList.remove('js');"
+        "if(document.body)document.body.classList.remove('locked');}},true);})(document.documentElement);</script>\n")
+
+def build():
+    index_css = asset('index.css', css('index'))
+    asset('sub.css', css('sub'))
+    index_js = asset('index.js', js())
+    head = f'<link rel="stylesheet" href="{index_css}">\n{BOOT}<script defer src="{index_js}"></script>\n'
+    write(OUT / 'index.html', document('Lorz Sites Sob Medida',
+          'Criação de sites e soluções personalizadas sob medida, com proposta por escrito antes de qualquer execução.', head, cards(read('index.html'))))
+    return ['index'] + subpages.build() + projetos_pages.build()
+
+if __name__ == '__main__':
+    print('ok', ', '.join(build()))

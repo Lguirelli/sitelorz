@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Helios 44-2 · 58 mm f/2</title>
+<meta name="description" content="Conheça por dentro a Helios 44-2, a clássica 58 mm f/2 de rosca M42: seis elementos em quatro grupos, diafragma de oito lâminas e o famoso bokeh giratório.">
+<meta name="theme-color" content="#000000">
+<meta name="color-scheme" content="dark">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preload" href="assets/helios.glb" as="fetch" type="model/gltf-binary" crossorigin>
+<link rel="modulepreload" href="assets/app.4c665418d4.js">
+<link rel="stylesheet" href="assets/fonts/fonts.css">
+<link rel="stylesheet" href="assets/style.31ed02956b.css">
+</head>
+<body class="loading">
+<script>document.documentElement.classList.add('js')</script>
+<noscript><style>.js .rv{opacity:1}#intro{display:none}.stage{position:relative;visibility:visible}.bar{height:var(--barH)}</style></noscript>
+<canvas id="bokeh" aria-hidden="true"></canvas>
+<canvas id="gl" aria-hidden="true"></canvas>
+<div class="vignette" aria-hidden="true"></div>
+<div id="markers" aria-hidden="true"></div>
+
+<div id="intro" aria-hidden="true">
+  <div class="intro-in">
+    <span class="cyr">HELIOS 44-2</span>
+    <div class="meter"><i></i></div>
+    <span id="loadtxt">Carregando a óptica · 0%</span>
+  </div>
+</div>
+
+<header class="bar top">
+  <div class="hud-item"><span class="rec"></span><b>Helios 44-2</b><span class="hud-hide-sm">58 mm · f/2 · M42</span></div>
+  <div class="hud-item"><span id="chapNum" class="tc">00 / 09</span><b id="chapName">Abertura</b></div>
+</header>
+<footer class="bar bot">
+  <div class="hud-item hud-hide-sm">TC <span id="tc" class="tc">00:00:00:00</span></div>
+  <div class="hud-item"><div class="scale" aria-hidden="true"><div class="scale-index"></div><div class="scale-strip" id="scaleStrip"></div></div></div>
+  <div class="hud-item"><span class="hud-hide-sm">Distância</span> <b id="distRead" class="tc">∞</b></div>
+</footer>
+
+<main id="story">
+
+  <section class="ch ch-hero" data-ch="hero" data-name="Início" style="height:150vh">
+    <div class="stage">
+      <div class="side l">
+        <h1 class="hero-word rv">Helios<span class="sr"> 44-2 · 58 mm f/2</span></h1>
+        <div class="hero-meta rv"><span><b>58 mm</b>focal</span><span><b>f/2</b>abertura</span><span><b>6/4</b>elementos/grupos</span></div>
+      </div>
+      <div class="side r">
+        <p class="hero-word num rv" aria-hidden="true">44-2</p>
+        <p class="rv">Objetiva soviética de rosca M42, fórmula duplo Gauss. Seis vidros, oito lâminas e o bokeh que gira.</p>
+        <div class="cue rv"><i></i>Role para abrir a lente</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="ch" data-ch="heranca" data-name="Origem" style="height:170vh">
+    <div class="stage">
+      <div class="side l">
+        <h2 class="rv">Herdeira do Biotar</h2>
+        <p class="rv">O desenho vem do <strong>Zeiss Biotar 58 mm f/2</strong>, calculado por Willy Merté em 1927. No pós-guerra, a indústria óptica soviética adotou a fórmula e criou a Helios-44, a objetiva que vinha montada nas câmeras Zenit.</p>
+        <p class="rv">Foram milhões de unidades, saídas de fábricas como KMZ, Valdai e MMZ. Por isso ela ainda é fácil de achar, barata e muito procurada por quem fotografa e filma.</p>
+      </div>
+      <div class="side r">
+        <h3 class="cap rv">Ficha técnica</h3>
+        <dl class="spec rv">
+          <div><dt>Distância focal</dt><dd>58 mm</dd></div>
+          <div><dt>Abertura</dt><dd>f/2 – f/16</dd></div>
+          <div><dt>Esquema óptico</dt><dd>6 elementos · 4 grupos</dd></div>
+          <div><dt>Ângulo de visão</dt><dd>40°</dd></div>
+          <div><dt>Lâminas</dt><dd>8</dd></div>
+          <div><dt>Foco mínimo</dt><dd>0,5 m</dd></div>
+          <div><dt>Rosca de filtro</dt><dd>49 mm</dd></div>
+          <div><dt>Encaixe</dt><dd>M42 × 1</dd></div>
+          <div><dt>Peso</dt><dd>≈ 230 g</dd></div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <section class="ch" data-ch="frente" data-name="Anel frontal" style="height:180vh">
+    <div class="stage">
+      <div class="side l">
+        <h2 class="rv">O anel frontal</h2>
+        <p class="rv">Na frente fica o anel de filtro, com rosca para filtros de 49 mm. Logo atrás vem o defletor de luz, pintado de preto fosco para segurar os reflexos que lavariam o contraste.</p>
+        <p class="rv">No anel de identificação ficam gravados o nome e a fórmula da lente: <strong class="mono">HELIOS-44-2 · 2/58</strong>.</p>
+      </div>
+      <div class="side r">
+        <h3 class="cap rv">Componentes</h3>
+        <ul class="parts rv">
+          <li><span>01</span><span>Anel de filtro<small>Alumínio polido e anodizado, rosca de 49 mm</small></span></li>
+          <li><span>02</span><span>Defletor de luz<small>Tinta preta fosca contra reflexo interno</small></span></li>
+          <li><span>03</span><span>Anel de identificação<small>Gravação em branco: nome, abertura e focal</small></span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="ch" data-ch="corpo" data-name="Corpo" style="height:180vh">
+    <div class="stage">
+      <div class="side l">
+        <h2 class="rv">Corpo e anéis de controle</h2>
+        <p class="rv">O tubo frontal, os dois anéis de abertura e o tambor da escala de profundidade de campo são de alumínio anodizado preto. Três parafusos prendem o tambor ao corpo.</p>
+        <p class="rv">As marcas coloridas da escala mostram, para cada abertura de f/2 a f/16, o começo e o fim da faixa nítida em torno da distância focada.</p>
+      </div>
+      <div class="side r">
+        <h3 class="cap rv">Componentes</h3>
+        <ul class="parts rv">
+          <li><span>04</span><span>Tubo frontal<small>Guia o conjunto e leva o pino de batente</small></span></li>
+          <li><span>05</span><span>Anel de pré-ajuste<small>Com mola de retenção: escolhe o limite da abertura</small></span></li>
+          <li><span>06</span><span>Anel de abertura<small>Gira sem cliques até o limite escolhido</small></span></li>
+          <li><span>07</span><span>Tambor da escala de PdC<small>Marcas gravadas para f/2, f/4, f/8, f/11 e f/16</small></span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="ch" data-ch="otica" data-name="Óptica" style="height:220vh">
+    <div class="stage">
+      <div class="side l">
+        <h2 class="rv">Seis elementos, quatro grupos</h2>
+        <p class="rv">É um duplo Gauss quase simétrico: um menisco na frente, um dupleto colado, o diafragma, outro dupleto colado e um elemento simples atrás.</p>
+        <p class="rv">Nas bordas do quadro, a curvatura de campo e a vinheta óptica deixam os pontos de luz com formato de olho de gato, alinhados em círculo. <strong>É daí que vem o bokeh giratório</strong> que você vê ao fundo desta página.</p>
+      </div>
+      <div class="side r">
+        <h3 class="cap rv">Grupos ópticos</h3>
+        <ul class="parts glass rv">
+          <li><span>G1</span><span>L1 · menisco positivo<small>Vidro crown com tratamento antirreflexo</small></span></li>
+          <li><span>G2</span><span>L2 + L3 · dupleto colado<small>Crown e flint unidos para corrigir cor</small></span></li>
+          <li><span>G3</span><span>L4 + L5 · dupleto colado<small>Espelha o G2 do outro lado do diafragma</small></span></li>
+          <li><span>G4</span><span>L6 · elemento traseiro<small>Fecha a fórmula e projeta a imagem no sensor</small></span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="ch" data-ch="diafragma" data-name="Diafragma" style="height:240vh">
+    <div class="stage">
+      <div class="side l">
+        <h2 class="rv">Diafragma pré-ajustável</h2>
+        <p class="rv">Oito lâminas de aço enegrecido giram em pinos de pivô. O anel atuador empurra todas ao mesmo tempo e fecha a íris.</p>
+        <p class="rv">Como o anel de abertura não tem cliques, dá para fechar o diafragma devagar no meio de uma tomada de vídeo, sem saltos de exposição.</p>
+      </div>
+      <div class="side r">
+        <h3 class="cap rv">Abertura</h3>
+        <div class="fread rv" aria-live="off"><em>f/</em><b id="fnum">2.0</b></div>
+        <div class="stops rv" id="stops"><span>2</span><span>2.8</span><span>4</span><span>5.6</span><span>8</span><span>11</span><span>16</span></div>
+        <ul class="parts rv hide-sm">
+          <li><span>08</span><span>Luva de acionamento<small>Leva o movimento do anel até a íris</small></span></li>
+          <li><span>09</span><span>Anel atuador<small>Oito pinos, um por lâmina</small></span></li>
+          <li><span>10</span><span>8 lâminas<small>Aço enegrecido, 0,4 mm</small></span></li>
+          <li><span>11</span><span>Placa-base e alojamento<small>Pinos de pivô fixos</small></span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="ch" data-ch="foco" data-name="Foco" style="height:190vh">
+    <div class="stage">
+      <div class="side l">
+        <h2 class="rv">Helicoide de foco</h2>
+        <p class="rv">Ao girar o anel de foco, três helicoides rosqueados um no outro transformam rotação em avanço. O bloco óptico se afasta do sensor e a lente foca mais perto.</p>
+        <p class="rv">O helicoide do meio é de latão. Latão contra alumínio, com graxa, dá ao foco o curso macio e amortecido típico dessas lentes.</p>
+      </div>
+      <div class="side r">
+        <h3 class="cap rv">Escala gravada · metros</h3>
+        <div class="dist rv"><span>0,5</span><span>0,55</span><span>0,6</span><span>0,7</span><span>0,8</span><span>0,9</span><span>1</span><span>1,1</span><span>1,2</span><span>1,3</span><span>1,5</span><span>1,7</span><span>2</span><span>3</span><span>4</span><span>6</span><span>10</span><span>∞</span></div>
+        <ul class="parts rv">
+          <li><span>12</span><span>Anel de foco<small>Três parafusos e arruelas o prendem</small></span></li>
+          <li><span>13</span><span>Helicoide interno<small>Alumínio escovado</small></span></li>
+          <li><span>14</span><span>Helicoide intermediário<small>Latão, com batente de infinito</small></span></li>
+          <li><span>15</span><span>Helicoide externo<small>Com chaveta-guia de latão</small></span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="ch" data-ch="encaixe" data-name="Encaixe" style="height:190vh">
+    <div class="stage">
+      <div class="side l">
+        <h2 class="rv">Rosca M42 × 1</h2>
+        <p class="rv">A lente se prende à câmera por uma rosca de 42 mm com passo de 1 mm. A distância de flange é de 45,46 mm, maior que a de quase todos os sistemas atuais.</p>
+        <p class="rv">Por isso um adaptador simples, sem vidro, leva a Helios para câmeras mirrorless mantendo o foco no infinito.</p>
+      </div>
+      <div class="side r">
+        <h3 class="cap rv">Adapta sem vidro</h3>
+        <div class="chips rv"><span>Sony E</span><span>Fujifilm X</span><span>Canon RF</span><span>Nikon Z</span><span>L-Mount</span><span>Micro 4/3</span><span>Canon EF</span><span class="no">Nikon F · só com vidro</span></div>
+        <ul class="parts rv">
+          <li><span>16</span><span>Célula traseira<small>Segura os grupos G3 e G4</small></span></li>
+          <li><span>17</span><span>Anel retentor traseiro</span></li>
+          <li><span>18</span><span>Flange traseira<small>Três parafusos de fixação</small></span></li>
+          <li><span>19</span><span>Rosca M42<small>42 mm, passo de 1 mm</small></span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="ch ch-anatomia" data-ch="anatomia" data-name="Anatomia" style="height:230vh">
+    <div class="stage">
+      <div class="side l">
+        <h2 class="rv">73 peças. Uma lente.</h2>
+        <p class="rv">Todas as peças em linha, do anel de filtro até a rosca de encaixe.</p>
+      </div>
+      <div class="side r">
+        <div class="count rv">
+          <div><b>6</b><span>vidros</span></div>
+          <div><b>8</b><span>lâminas</span></div>
+          <div><b>3</b><span>helicoides</span></div>
+          <div><b>50</b><span>gravações</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="ch" data-ch="remontagem" data-name="Helios 44-2" style="height:200vh">
+    <div class="stage">
+      <div class="side l">
+        <h2 class="rv">Pronta para fotografar</h2>
+        <p class="rv">Mais de sessenta anos depois do primeiro lote, a mesma fórmula continua fazendo o fundo das fotos girar.</p>
+      </div>
+      <div class="side r">
+        <dl class="spec rv">
+          <div><dt>Lente</dt><dd>Helios 44-2</dd></div>
+          <div><dt>Óptica</dt><dd>58 mm f/2 · 6/4</dd></div>
+          <div><dt>Encaixe</dt><dd>M42 × 1</dd></div>
+        </dl>
+        <button class="btn rv" id="again" type="button">Voltar ao início</button>
+      </div>
+    </div>
+  </section>
+</main>
+<script type="module" src="assets/app.4c665418d4.js"></script>
+</body>
+</html>

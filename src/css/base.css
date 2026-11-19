@@ -1,0 +1,14 @@
+/* shared by every page: the brand fonts, colours and type families */
+@font-face{font-family:"Brandson";src:url(fonts/Brandson.woff2) format("woff2");font-display:swap}
+@font-face{font-family:"Alte Haas Grotesk";font-weight:400;src:url(fonts/AlteHaasGrotesk-Regular.woff2) format("woff2");font-display:swap}
+@font-face{font-family:"Alte Haas Grotesk";font-weight:700;src:url(fonts/AlteHaasGrotesk-Bold.woff2) format("woff2");font-display:swap}
+@font-face{font-family:"Advercase";src:url(fonts/Advercase-Regular.woff2) format("woff2");font-display:swap}
+:root{
+  --navy-950:#060813; --navy-900:#0a0f23; --navy-800:#1d2031; --navy-700:#353542; --navy-500:#524f57;
+  --cream-50:#fdf4ec; --cream-200:#fae4cf; --cream-300:#ddcaba; --cream-400:#b2a49b;
+  --red-700:#7d1b2d; --red-600:#bb2233; --red-400:#d57375;
+  --orange-700:#b3620d; --orange-500:#fb8603; --orange-300:#fab569;
+  --font-display:"Brandson",Impact,"Arial Narrow",sans-serif;
+  --font-heading:"Alte Haas Grotesk","Helvetica Neue",Helvetica,Arial,sans-serif;
+  --font-body:"Advercase",Georgia,"Times New Roman",serif;
+}

@@ -1,5 +1,8 @@
 /* Isadora Guirelli · Design system 3.0
    Editorial, sereno e acessível. O conteúdo não depende de animações ou JS. */
+/* Fontes servidas pelo próprio site (variáveis, subconjunto latino; licença SIL OFL 1.1) */
+@font-face { font-family: "Cormorant Garamond"; src: url("assets/fonts/cormorant-garamond.woff2") format("woff2"); font-weight: 400 700; font-style: normal; font-display: swap; }
+@font-face { font-family: "Montserrat"; src: url("assets/fonts/montserrat.woff2") format("woff2"); font-weight: 400 700; font-style: normal; font-display: swap; }
 :root {
   --primary: #014744;
   --primary-deep: #003a37;

@@ -1,9 +1,9 @@
 /* Brasa · cartaz de hamburgueria de bairro
    Tomate, mostarda, creme de papel e carvão. Monument Extended nas manchetes e ações, Printvetica na leitura. */
 
-@font-face { font-family: "Monument Extended"; src: url("assets/monumentextended-regular.otf") format("opentype"); font-weight: 400; font-display: swap; }
-@font-face { font-family: "Monument Extended"; src: url("assets/monumentextended-ultrabold.otf") format("opentype"); font-weight: 800; font-display: swap; }
-@font-face { font-family: Printvetica; src: url("assets/printvetica.otf") format("opentype"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Monument Extended"; src: url("assets/monumentextended-regular.woff2") format("woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Monument Extended"; src: url("assets/monumentextended-ultrabold.woff2") format("woff2"); font-weight: 800; font-display: swap; }
+@font-face { font-family: Printvetica; src: url("assets/printvetica.woff2") format("woff2"); font-weight: 400; font-display: swap; }
 
 :root {
   --tomate: #bf2e1a;
